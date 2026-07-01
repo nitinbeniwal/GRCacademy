@@ -1,0 +1,45 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root { color-scheme: light; }
+
+html { scroll-behavior: smooth; }
+body {
+  margin: 0;
+  font-family: Inter, 'Segoe UI', system-ui, sans-serif;
+  background: #f5f7fa;
+  color: #1f1f1f;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* thin scrollbars */
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-thumb { background: #c7d0dd; border-radius: 6px; }
+::-webkit-scrollbar-thumb:hover { background: #a9b6c8; }
+
+@layer components {
+  .container-x { @apply mx-auto w-full max-w-[1200px] px-4 sm:px-6; }
+  .btn { @apply inline-flex items-center justify-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold transition; }
+  .btn-primary { @apply btn bg-cblue text-white hover:bg-cblue-700; }
+  .btn-ghost { @apply btn border border-cblue text-cblue hover:bg-cblue-50; }
+  .btn-dark { @apply btn bg-night-800 text-white hover:bg-night-700; }
+  .chip { @apply inline-flex items-center gap-1 rounded-full bg-cblue-50 px-2.5 py-1 text-xs font-semibold text-cblue-700; }
+  .card { @apply rounded-xl border border-cline bg-white shadow-card; }
+  .link { @apply text-cblue hover:underline; }
+  .prose-grc h3 { @apply mt-6 mb-2 text-lg font-bold text-cink; }
+  .prose-grc h4 { @apply mt-5 mb-1.5 font-semibold text-cblue-700; }
+  .prose-grc p { @apply my-2.5 leading-relaxed text-[15px] text-cink/90; }
+  .prose-grc ul { @apply my-2.5 list-disc space-y-1.5 pl-5 text-[15px]; }
+  .prose-grc ol { @apply my-2.5 list-decimal space-y-1.5 pl-5 text-[15px]; }
+  .prose-grc table { @apply my-4 w-full border-collapse text-sm; }
+  .prose-grc th { @apply border border-cline bg-cbg px-3 py-2 text-left font-semibold; }
+  .prose-grc td { @apply border border-cline px-3 py-2 align-top; }
+  .prose-grc code { @apply rounded bg-cbg px-1.5 py-0.5 font-mono text-[13px] text-cblue-700; }
+  .prose-grc .callout { @apply my-4 rounded-r-lg border-l-4 border-cblue bg-cblue-50 px-4 py-3 text-[14px]; }
+  .prose-grc .callout.why { @apply border-neon-purple bg-[#f3effe]; }
+  .prose-grc .callout.warn { @apply border-neon-amber bg-[#fff7e6]; }
+}
+
+/* star rating */
+.stars { color: #f5a623; letter-spacing: 1px; }
