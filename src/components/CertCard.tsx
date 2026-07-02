@@ -4,6 +4,7 @@ import { Lock, CheckCircle2, ArrowRight } from 'lucide-react'
 import type { Certification } from '../types'
 import { coursesInCert, courseLessonCount } from '../data/curriculum'
 import { useCertProgress } from '../hooks/useProgress'
+import { formatINR, discountPct } from '../lib/format'
 
 export default function CertCard({ cert }: { cert: Certification }) {
   const courses = coursesInCert(cert.id)
@@ -51,12 +52,24 @@ export default function CertCard({ cert }: { cert: Certification }) {
           </>
         )}
 
-        <div className="mt-auto pt-4">
+        <div className="mt-auto flex items-end justify-between pt-4">
           {soon ? (
             <span className="chip">Coming soon</span>
           ) : (
             <span className="inline-flex items-center gap-1 text-sm font-semibold text-cblue">
               {percent > 0 ? 'Continue' : 'Start certification'} <ArrowRight size={15} />
+            </span>
+          )}
+          {!soon && (
+            <span className="text-right leading-tight">
+              <span className="text-base font-extrabold text-cink">{formatINR(cert.price)}</span>
+              {cert.listPrice && (
+                <span className="ml-1 text-xs text-cslate line-through">{formatINR(cert.listPrice)}</span>
+              )}
+              {(() => {
+                const p = discountPct(cert.price, cert.listPrice)
+                return p ? <span className="ml-1 text-[11px] font-bold text-emerald-600">-{p}%</span> : null
+              })()}
             </span>
           )}
         </div>

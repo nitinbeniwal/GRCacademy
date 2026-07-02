@@ -28,7 +28,7 @@ function lab(id: string, title: string, minutes: number, labId: LabId): Lesson {
 export const DOMAINS: Domain[] = [
   { id: 'core', title: 'Core GRC', tagline: 'The foundation every GRC career is built on.', icon: '🧭', color: 'from-cblue to-violet-600', status: 'available' },
   { id: 'ai', title: 'AI Governance', tagline: 'Govern AI systems — the fastest-growing GRC discipline.', icon: '🤖', color: 'from-fuchsia-500 to-purple-600', status: 'available' },
-  { id: 'cloud', title: 'Cloud GRC', tagline: 'Compliance for cloud-native and multi-cloud estates.', icon: '☁️', color: 'from-sky-500 to-cyan-600', status: 'coming-soon' },
+  { id: 'cloud', title: 'Cloud GRC', tagline: 'Compliance for cloud-native and multi-cloud estates.', icon: '☁️', color: 'from-sky-500 to-cyan-600', status: 'available' },
 ]
 
 // ============================================================================
@@ -41,13 +41,15 @@ export const CERTIFICATIONS: Certification[] = [
     blurb: 'Start from zero. The language, mental models and core machinery of governance, risk and compliance.',
     outcomes: ['Explain what GRC is and why it exists', 'Build and score a risk register', 'Read a control and its purpose', 'Write an enforceable policy'],
     courseIds: ['c-grc101', 'c-riskreg', 'c-secfound', 'c-policy'], status: 'available',
+    price: 2999, listPrice: 4999, priceNote: 'Foundation tier · lifetime access',
   },
   {
     id: 'GRC2', code: 'GRC2', domainId: 'core', title: 'GRC Practitioner', level: 2, tier: 'Practitioner',
     icon: '🛡️', color: 'from-violet-500 to-indigo-600',
     blurb: 'The frameworks and day-to-day operations. Run audits, evidence controls, and manage vendor risk to real standards.',
     outcomes: ['Apply ISO 27001, NIST CSF, SOC 2, GDPR and PCI DSS', 'Run an audit and evidence controls', 'Manage third-party risk', 'Map controls across frameworks'],
-    courseIds: ['c-iso27001', 'c-nistcsf', 'c-soc2', 'c-gdpr', 'c-pcidss', 'c-audit', 'c-tprm'], status: 'available',
+    courseIds: ['c-iso27001', 'c-nistcsf', 'c-soc2', 'c-gdpr', 'c-dpdpa', 'c-hipaa', 'c-pcidss', 'c-audit', 'c-tprm'], status: 'available',
+    price: 5999, listPrice: 9999, priceNote: 'Practitioner tier · 9 frameworks · lifetime access',
   },
   {
     id: 'GRCL', code: 'GRCL', domainId: 'core', title: 'GRC Lead', level: 3, tier: 'Lead',
@@ -55,6 +57,7 @@ export const CERTIFICATIONS: Certification[] = [
     blurb: 'Lead a program. Enterprise risk domains, continuity, internal audit, financial controls, board reporting and interview mastery.',
     outcomes: ['Run BCM, internal audit and financial-controls programs', 'Set risk appetite and report to a board', 'Build a GRC program from zero', 'Ace a senior GRC interview'],
     courseIds: ['c-bcm', 'c-intaudit', 'c-fincontrols', 'c-oprisk', 'c-career'], status: 'available',
+    price: 9999, listPrice: 15999, priceNote: 'Lead tier · capstone + interview prep · lifetime access',
   },
   {
     id: 'AIG1', code: 'AIG1', domainId: 'ai', title: 'AI Governance Associate', level: 1, tier: 'Associate',
@@ -62,6 +65,7 @@ export const CERTIFICATIONS: Certification[] = [
     blurb: 'Govern AI systems: classify risk under the EU AI Act, apply the NIST AI RMF, detect bias and run an AI registry.',
     outcomes: ['Classify AI risk under the EU AI Act', 'Apply the four NIST AI RMF functions', 'Detect bias and disparate impact', 'Build an AI system registry'],
     courseIds: ['c-aigov'], status: 'available',
+    price: 4999, listPrice: 7999, priceNote: 'Associate tier · EU AI Act + NIST AI RMF · lifetime access',
   },
   {
     id: 'AIG2', code: 'AIG2', domainId: 'ai', title: 'AI Governance Professional', level: 2, tier: 'Professional',
@@ -69,13 +73,15 @@ export const CERTIFICATIONS: Certification[] = [
     blurb: 'Go deep: stand up a certifiable ISO 42001 AI Management System and operationalise the NIST AI RMF end to end.',
     outcomes: ['Implement an ISO 42001 AIMS', 'Run an AI impact assessment', 'Operationalise Govern/Map/Measure/Manage', 'Map AI controls to the EU AI Act'],
     courseIds: ['c-iso42001', 'c-airmf'], status: 'available',
+    price: 8999, listPrice: 13999, priceNote: 'Professional tier · ISO 42001 AIMS · lifetime access',
   },
   {
     id: 'CLD1', code: 'CLD1', domainId: 'cloud', title: 'Cloud GRC Associate', level: 1, tier: 'Associate',
     icon: '☁️', color: 'from-sky-500 to-cyan-600',
-    blurb: 'Compliance for cloud estates: shared responsibility, CSPM, FedRAMP, CIS Benchmarks and cloud audit evidence. Coming soon.',
-    outcomes: ['Cloud shared responsibility at depth', 'CSPM & misconfiguration risk', 'FedRAMP & cloud authorisation', 'Cloud audit evidence'],
-    courseIds: [], status: 'coming-soon',
+    blurb: 'Compliance for cloud estates: shared responsibility, the CSA CCM, CSPM, CIS Benchmarks and FedRAMP cloud authorisation.',
+    outcomes: ['Cloud shared responsibility at depth', 'Govern multi-cloud with the CSA CCM', 'CSPM & misconfiguration risk', 'FedRAMP & cloud authorisation'],
+    courseIds: ['c-cloudfound', 'c-cspm', 'c-fedramp'], status: 'available',
+    price: 4999, listPrice: 7999, priceNote: 'Associate tier · cloud frameworks · lifetime access',
   },
 ]
 
@@ -550,6 +556,109 @@ export const COURSES: Course[] = [
         L('airmf-manage', 'reading', 'MANAGE — act on the risks', 10),
         lab('lab-bias-2', 'LAB: Bias Detection', 20, 'bias'),
         L('airmf-quiz', 'quiz', 'Final checkpoint: AI RMF', 8),
+      ]},
+    ],
+  },
+
+  // ---------------------------------------------------------------- GRC2 (added frameworks)
+  {
+    id: 'c-dpdpa', certId: 'GRC2', domainId: 'core', icon: '🇮🇳', level: 'Intermediate',
+    title: 'India DPDP Act 2023 — Digital Personal Data Protection',
+    subtitle: "India's first comprehensive data-protection law.",
+    rating: 4.8, learners: 9120, weeks: 2, hours: 5,
+    tags: ['DPDPA', 'Privacy', 'India', 'Consent'],
+    skills: ['Data Fiduciary duties', 'Consent & Consent Managers', 'DPDPA vs GDPR', 'Significant Data Fiduciary'],
+    description:
+      "Master the Digital Personal Data Protection Act, 2023 — roles (Data Principal, Fiduciary, Consent Manager), consent, children's data, breach duties, and exactly where it diverges from GDPR. Essential for anyone operating in India.",
+    modules: [
+      { id: 'm-dpdpa-1', title: 'The DPDP Act', weekLabel: 'Module 1', lessons: [
+        L('dpdpa-intro', 'reading', 'The DPDP Act 2023 & its roles', 12),
+        L('dpdpa-vs-gdpr', 'reading', 'DPDPA vs GDPR — the deltas', 11),
+        L('dpdpa-quiz', 'quiz', 'Checkpoint: DPDPA', 6),
+      ]},
+      { id: 'm-dpdpa-2', title: 'Operationalise', weekLabel: 'Module 2', lessons: [
+        lab('lab-dpdpa-map', 'LAB: Map DPDPA duties to controls', 20, 'crosswalk'),
+      ]},
+    ],
+  },
+  {
+    id: 'c-hipaa', certId: 'GRC2', domainId: 'core', icon: '🏥', level: 'Intermediate',
+    title: 'HIPAA — US Healthcare Information Security',
+    subtitle: 'Protect PHI under the Privacy & Security Rules.',
+    rating: 4.7, learners: 13300, weeks: 2, hours: 6,
+    tags: ['HIPAA', 'PHI', 'Security Rule', 'BAA'],
+    skills: ['Privacy vs Security Rule', 'Administrative/physical/technical safeguards', 'BAAs', 'Breach notification'],
+    description:
+      'Understand HIPAA end to end: PHI and covered entities, the Privacy and Security Rules, required vs addressable safeguards, business associate agreements, and the breach notification rule.',
+    modules: [
+      { id: 'm-hipaa-1', title: 'The Rules', weekLabel: 'Module 1', lessons: [
+        L('hipaa-intro', 'reading', 'HIPAA, PHI & the two rules', 12),
+        L('hipaa-safeguards', 'reading', 'The Security Rule safeguards', 11),
+        L('hipaa-quiz', 'quiz', 'Checkpoint: HIPAA', 6),
+      ]},
+      { id: 'm-hipaa-2', title: 'Evidence', weekLabel: 'Module 2', lessons: [
+        lab('lab-hipaa-ev', 'LAB: HIPAA risk-analysis evidence', 20, 'evidence'),
+      ]},
+    ],
+  },
+
+  // ---------------------------------------------------------------- CLD1
+  {
+    id: 'c-cloudfound', certId: 'CLD1', domainId: 'cloud', icon: '☁️', level: 'Intermediate',
+    title: 'Cloud Shared Responsibility & Governance',
+    subtitle: 'Who secures what — and how to govern multi-cloud.',
+    rating: 4.8, learners: 11200, weeks: 2, hours: 6,
+    tags: ['Shared Responsibility', 'CSA CCM', 'CAIQ', 'Multi-cloud'],
+    skills: ['Shared responsibility by service model', 'CSA Cloud Controls Matrix', 'CAIQ & STAR', 'Control ownership'],
+    description:
+      'The foundation of cloud GRC. Nail the shared responsibility model across IaaS/PaaS/SaaS, then govern multi-cloud estates with the CSA Cloud Controls Matrix, CAIQ and the STAR registry.',
+    modules: [
+      { id: 'm-cld-1', title: 'Responsibility', weekLabel: 'Module 1', lessons: [
+        L('cld-shared', 'reading', 'The shared responsibility model, for real', 12),
+        L('cld-ccm', 'reading', 'Governing multi-cloud with the CSA CCM', 11),
+        L('cld-quiz-1', 'quiz', 'Checkpoint: responsibility & CCM', 6),
+      ]},
+      { id: 'm-cld-2', title: 'Review', weekLabel: 'Module 2', lessons: [
+        lab('lab-cloud-arch', 'LAB: Cloud Architecture Review', 24, 'arch-review'),
+      ]},
+    ],
+  },
+  {
+    id: 'c-cspm', certId: 'CLD1', domainId: 'cloud', icon: '🛰️', level: 'Intermediate',
+    title: 'Cloud Posture & Misconfiguration Risk',
+    subtitle: 'CSPM, CIS Benchmarks and compliance-as-code.',
+    rating: 4.7, learners: 8600, weeks: 2, hours: 6,
+    tags: ['CSPM', 'CIS Benchmarks', 'IaC', 'Policy-as-code'],
+    skills: ['CSPM as continuous evidence', 'CIS Benchmarks', 'Policy-as-code guardrails', 'Shift-left compliance'],
+    description:
+      'Misconfiguration is the number-one cloud risk. Learn how CSPM turns configuration into continuous control evidence, how CIS Benchmarks define "good", and how to enforce them as policy-as-code in the pipeline.',
+    modules: [
+      { id: 'm-cspm-1', title: 'Posture', weekLabel: 'Module 1', lessons: [
+        L('cld-cspm', 'reading', 'Cloud Security Posture Management', 12),
+        L('cld-cis', 'reading', 'CIS Benchmarks & infrastructure as code', 11),
+        L('cld-quiz-2', 'quiz', 'Checkpoint: posture', 6),
+      ]},
+      { id: 'm-cspm-2', title: 'Mapping', weekLabel: 'Module 2', lessons: [
+        lab('lab-cloud-map', 'LAB: Map CSPM rules to controls', 20, 'mapping'),
+      ]},
+    ],
+  },
+  {
+    id: 'c-fedramp', certId: 'CLD1', domainId: 'cloud', icon: '🏛️', level: 'Advanced',
+    title: 'FedRAMP & Cloud Authorization',
+    subtitle: 'The gold-standard cloud authorization lifecycle.',
+    rating: 4.6, learners: 5400, weeks: 2, hours: 5,
+    tags: ['FedRAMP', 'NIST 800-53', 'ATO', 'ConMon'],
+    skills: ['Authorization boundary', 'Impact levels', 'ATO vs P-ATO', 'Continuous monitoring'],
+    description:
+      'FedRAMP authorises cloud services for US government use on NIST 800-53. Learn impact levels, the authorization boundary, ATO vs JAB P-ATO, and continuous monitoring — a model that maps onto any commercial cloud program.',
+    modules: [
+      { id: 'm-fedramp-1', title: 'Authorization', weekLabel: 'Module 1', lessons: [
+        L('cld-fedramp', 'reading', 'FedRAMP & cloud authorization', 12),
+        L('cld-quiz-3', 'quiz', 'Checkpoint: FedRAMP', 6),
+      ]},
+      { id: 'm-fedramp-2', title: 'Evidence', weekLabel: 'Module 2', lessons: [
+        lab('lab-fedramp-ev', 'LAB: Build an authorization evidence pack', 20, 'evidence'),
       ]},
     ],
   },

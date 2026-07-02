@@ -31,6 +31,12 @@ export default function Navbar() {
           <NavLink to="/catalog" className={linkCls}>
             Catalog
           </NavLink>
+          <NavLink to="/leaderboard" className={linkCls}>
+            Leaderboard
+          </NavLink>
+          <NavLink to="/pricing" className={linkCls}>
+            Pricing
+          </NavLink>
           <NavLink to="/dashboard" className={linkCls}>
             My Learning
           </NavLink>

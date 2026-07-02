@@ -4,11 +4,14 @@ import Navbar from './components/Navbar'
 import Footer from './components/Footer'
 import ScrollToTop from './components/ScrollToTop'
 import { RequireAuth } from './auth'
+import { ServerSync } from './lib/sync'
 import { useStore } from './store/useStore'
 
 const Home = lazy(() => import('./pages/Home'))
 const Catalog = lazy(() => import('./pages/Catalog'))
 const Certifications = lazy(() => import('./pages/Certifications'))
+const Pricing = lazy(() => import('./pages/Pricing'))
+const Leaderboard = lazy(() => import('./pages/Leaderboard'))
 const CertificationPage = lazy(() => import('./pages/CertificationPage'))
 const CoursePage = lazy(() => import('./pages/CoursePage'))
 const LessonPage = lazy(() => import('./pages/LessonPage'))
@@ -32,6 +35,7 @@ export default function App() {
   return (
     <div className="flex min-h-screen flex-col">
       <ScrollToTop />
+      <ServerSync />
       <Navbar />
       <main className="flex-1">
         <Suspense fallback={<PageFallback />}>
@@ -39,6 +43,8 @@ export default function App() {
             <Route path="/" element={<Home />} />
             <Route path="/catalog" element={<Catalog />} />
             <Route path="/certifications" element={<Certifications />} />
+            <Route path="/pricing" element={<Pricing />} />
+            <Route path="/leaderboard" element={<Leaderboard />} />
             <Route path="/roadmap" element={<Navigate to="/certifications" replace />} />
             <Route path="/cert/:certId" element={<CertificationPage />} />
             <Route path="/course/:courseId" element={<CoursePage />} />

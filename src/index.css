@@ -39,7 +39,32 @@ body {
   .prose-grc .callout { @apply my-4 rounded-r-lg border-l-4 border-cblue bg-cblue-50 px-4 py-3 text-[14px]; }
   .prose-grc .callout.why { @apply border-neon-purple bg-[#f3effe]; }
   .prose-grc .callout.warn { @apply border-neon-amber bg-[#fff7e6]; }
+
+  /* ---- DARK "arena" surface: labs, dashboard, leaderboard, pricing ---- */
+  .arena { @apply bg-night-950 bg-grid bg-[length:40px_40px] text-arena-text; }
+  .panel { @apply rounded-xl border border-arena-line bg-night-900/80 shadow-panel backdrop-blur; }
+  .panel-hover { @apply transition hover:border-neon-green/40 hover:shadow-glow; }
+  .btn-neon { @apply btn bg-neon-green text-night-950 font-bold hover:shadow-glow hover:brightness-110; }
+  .btn-neon-outline { @apply btn border border-neon-green/60 text-neon-green hover:bg-neon-green/10; }
+  .chip-dark { @apply inline-flex items-center gap-1 rounded-full border border-arena-line bg-night-800 px-2.5 py-1 text-xs font-semibold text-arena-muted; }
+  .tier-pill { @apply inline-flex items-center gap-1.5 rounded-md border border-neon-cyan/30 bg-neon-cyan/10 px-2 py-0.5 font-mono text-[11px] font-bold uppercase tracking-wider text-neon-cyan; }
+  .rank-badge { @apply inline-flex items-center gap-1.5 rounded-full border border-neon-purple/40 bg-neon-purple/10 px-3 py-1 text-sm font-semibold text-neon-purple; }
+
+  /* leaderboard rows */
+  .lb-row { @apply flex items-center gap-4 border-b border-arena-line px-4 py-3 transition hover:bg-night-800/60; }
+  .lb-rank { @apply w-8 text-center font-mono text-sm font-bold text-arena-muted; }
+
+  /* pricing */
+  .price-strike { @apply text-arena-muted line-through decoration-neon-red/70; }
+  .save-badge { @apply inline-flex items-center rounded-full bg-neon-green/15 px-2 py-0.5 text-xs font-bold text-neon-green; }
 }
 
 /* star rating */
 .stars { color: #f5a623; letter-spacing: 1px; }
+
+/* dark-scrollbars inside the arena */
+.arena ::-webkit-scrollbar-thumb { background: #223049; }
+.arena ::-webkit-scrollbar-thumb:hover { background: #2f4066; }
+
+/* terminal blinking cursor */
+.cursor::after { content: '▋'; @apply animate-blink text-neon-green; }

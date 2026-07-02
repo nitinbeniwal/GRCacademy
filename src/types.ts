@@ -76,6 +76,12 @@ export interface Certification {
   /** ordered course ids that make up the certification */
   courseIds: string[]
   status: Availability
+  /** pricing — all amounts in INR (rupees). Razorpay charges in paise = price * 100. */
+  price: number
+  /** strike-through list price for the early-bird / discount display */
+  listPrice?: number
+  /** short value line shown on the pricing card */
+  priceNote?: string
 }
 
 export type DomainId = 'core' | 'ai' | 'cloud'
