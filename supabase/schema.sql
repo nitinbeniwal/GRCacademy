@@ -135,3 +135,20 @@ create or replace view public.leaderboard as
   order by xp desc, updated_at asc;
 
 grant select on public.leaderboard to anon, authenticated;
+
+-- Seasonal (current calendar month) ranking, summed from xp_events.
+create or replace view public.season_leaderboard as
+  select
+    row_number() over (order by e.season_xp desc) as rank,
+    p.id, p.username, p.avatar_url, p.country,
+    e.season_xp as xp, p.streak
+  from public.profiles p
+  join (
+    select user_id, sum(amount)::int as season_xp
+    from public.xp_events
+    where created_at >= date_trunc('month', now())
+    group by user_id
+  ) e on e.user_id = p.id
+  order by e.season_xp desc;
+
+grant select on public.season_leaderboard to anon, authenticated;

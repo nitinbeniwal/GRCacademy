@@ -57,9 +57,9 @@ export default function Navbar() {
             <Flame size={16} /> {streak}
           </span>
           <button
-            onClick={() => nav('/dashboard')}
+            onClick={() => nav('/profile')}
             className="flex items-center gap-2 rounded-full bg-cblue-50 px-3 py-1.5 text-sm font-bold text-cblue-700"
-            title={`${xp} XP`}
+            title={`${xp} XP · view profile`}
           >
             <Trophy size={15} />
             <span className="hidden lg:inline">

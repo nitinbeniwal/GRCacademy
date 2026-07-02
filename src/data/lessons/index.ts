@@ -9,6 +9,7 @@ import { aigov2 } from './aigov2'
 import { payments } from './payments'
 import { career } from './career'
 import { cloud } from './cloud'
+import { governance } from './governance'
 
 export const lessonContent: Record<string, LessonContent> = {
   ...foundations,
@@ -21,4 +22,5 @@ export const lessonContent: Record<string, LessonContent> = {
   ...payments,
   ...career,
   ...cloud,
+  ...governance,
 }

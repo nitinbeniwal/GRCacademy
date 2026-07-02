@@ -48,15 +48,15 @@ export const CERTIFICATIONS: Certification[] = [
     icon: '🛡️', color: 'from-violet-500 to-indigo-600',
     blurb: 'The frameworks and day-to-day operations. Run audits, evidence controls, and manage vendor risk to real standards.',
     outcomes: ['Apply ISO 27001, NIST CSF, SOC 2, GDPR and PCI DSS', 'Run an audit and evidence controls', 'Manage third-party risk', 'Map controls across frameworks'],
-    courseIds: ['c-iso27001', 'c-nistcsf', 'c-soc2', 'c-gdpr', 'c-dpdpa', 'c-hipaa', 'c-pcidss', 'c-audit', 'c-tprm'], status: 'available',
-    price: 5999, listPrice: 9999, priceNote: 'Practitioner tier · 9 frameworks · lifetime access',
+    courseIds: ['c-iso27001', 'c-iso27701', 'c-nistcsf', 'c-soc2', 'c-gdpr', 'c-dpdpa', 'c-hipaa', 'c-pcidss', 'c-cmmc', 'c-audit', 'c-tprm'], status: 'available',
+    price: 5999, listPrice: 9999, priceNote: 'Practitioner tier · 11 frameworks · lifetime access',
   },
   {
     id: 'GRCL', code: 'GRCL', domainId: 'core', title: 'GRC Lead', level: 3, tier: 'Lead',
     icon: '👑', color: 'from-slate-700 to-night-800',
     blurb: 'Lead a program. Enterprise risk domains, continuity, internal audit, financial controls, board reporting and interview mastery.',
     outcomes: ['Run BCM, internal audit and financial-controls programs', 'Set risk appetite and report to a board', 'Build a GRC program from zero', 'Ace a senior GRC interview'],
-    courseIds: ['c-bcm', 'c-intaudit', 'c-fincontrols', 'c-oprisk', 'c-career'], status: 'available',
+    courseIds: ['c-bcm', 'c-intaudit', 'c-fincontrols', 'c-oprisk', 'c-cobit', 'c-career'], status: 'available',
     price: 9999, listPrice: 15999, priceNote: 'Lead tier · capstone + interview prep · lifetime access',
   },
   {
@@ -659,6 +659,68 @@ export const COURSES: Course[] = [
       ]},
       { id: 'm-fedramp-2', title: 'Evidence', weekLabel: 'Module 2', lessons: [
         lab('lab-fedramp-ev', 'LAB: Build an authorization evidence pack', 20, 'evidence'),
+      ]},
+    ],
+  },
+
+  // ---------------------------------------------------------------- GRC2 / GRCL (added frameworks)
+  {
+    id: 'c-iso27701', certId: 'GRC2', domainId: 'core', icon: '🔏', level: 'Intermediate',
+    title: 'ISO/IEC 27701 — Privacy Information Management',
+    subtitle: 'Turn privacy law into certifiable controls.',
+    rating: 4.7, learners: 8100, weeks: 2, hours: 6,
+    tags: ['ISO 27701', 'PIMS', 'Privacy', 'GDPR mapping'],
+    skills: ['PIMS on top of an ISMS', 'Controller vs processor controls', 'GDPR/DPDPA mapping', 'ROPA as evidence'],
+    description:
+      'Extend an ISO 27001 ISMS into a Privacy Information Management System. Learn the controller (Annex A) and processor (Annex B) control sets, and how one certified PIMS demonstrates compliance across GDPR and DPDPA.',
+    modules: [
+      { id: 'm-27701-1', title: 'The PIMS', weekLabel: 'Module 1', lessons: [
+        L('iso27701-intro', 'reading', 'ISO 27701 & the PIMS', 12),
+        L('iso27701-map', 'reading', 'Mapping 27701 to the law', 11),
+        L('iso27701-quiz', 'quiz', 'Checkpoint: ISO 27701', 6),
+      ]},
+      { id: 'm-27701-2', title: 'Mapping', weekLabel: 'Module 2', lessons: [
+        lab('lab-27701-map', 'LAB: Map 27701 controls to GDPR', 20, 'crosswalk'),
+      ]},
+    ],
+  },
+  {
+    id: 'c-cmmc', certId: 'GRC2', domainId: 'core', icon: '🛡️', level: 'Advanced',
+    title: 'CMMC 2.0 — Defense Supply-Chain Security',
+    subtitle: 'FCI, CUI and NIST 800-171 for DoD contractors.',
+    rating: 4.6, learners: 6200, weeks: 2, hours: 6,
+    tags: ['CMMC', 'NIST 800-171', 'CUI', 'SSP'],
+    skills: ['The 3 CMMC levels', 'FCI vs CUI', 'SSP & POA&M', 'SPRS scoring'],
+    description:
+      'The certification the US Defense Industrial Base must meet. Understand the three levels, how Level 2 maps to NIST SP 800-171, the SSP and POA&M artifacts, and the SPRS score submitted to the DoD.',
+    modules: [
+      { id: 'm-cmmc-1', title: 'The Model', weekLabel: 'Module 1', lessons: [
+        L('cmmc-intro', 'reading', 'CMMC 2.0 & its three levels', 12),
+        L('cmmc-ssp', 'reading', 'The SSP and POA&M', 11),
+        L('cmmc-quiz', 'quiz', 'Checkpoint: CMMC', 6),
+      ]},
+      { id: 'm-cmmc-2', title: 'Mapping', weekLabel: 'Module 2', lessons: [
+        lab('lab-cmmc-map', 'LAB: Map CMMC L2 to 800-171', 20, 'mapping'),
+      ]},
+    ],
+  },
+  {
+    id: 'c-cobit', certId: 'GRCL', domainId: 'core', icon: '🏗️', level: 'Advanced',
+    title: 'COBIT 2019 — Enterprise IT Governance',
+    subtitle: 'Govern IT for value, not just security.',
+    rating: 4.6, learners: 7400, weeks: 2, hours: 7,
+    tags: ['COBIT 2019', 'IT Governance', 'EDM', 'Design Factors'],
+    skills: ['Governance vs management (EDM/PBRM)', '40 objectives & 5 domains', 'Design factors', 'Capability levels'],
+    description:
+      "ISACA's framework for governing enterprise IT. Master the governance/management split (EDM vs PBRM), the 40 objectives across five domains, and how design factors tailor a right-sized, board-defensible governance system.",
+    modules: [
+      { id: 'm-cobit-1', title: 'The Framework', weekLabel: 'Module 1', lessons: [
+        L('cobit-intro', 'reading', 'COBIT 2019 & governing IT', 12),
+        L('cobit-design', 'reading', 'Design factors & the tailored system', 11),
+        L('cobit-quiz', 'quiz', 'Checkpoint: COBIT', 6),
+      ]},
+      { id: 'm-cobit-2', title: 'Mapping', weekLabel: 'Module 2', lessons: [
+        lab('lab-cobit-map', 'LAB: Map COBIT objectives to controls', 20, 'mapping'),
       ]},
     ],
   },

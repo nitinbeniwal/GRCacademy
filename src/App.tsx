@@ -12,6 +12,7 @@ const Catalog = lazy(() => import('./pages/Catalog'))
 const Certifications = lazy(() => import('./pages/Certifications'))
 const Pricing = lazy(() => import('./pages/Pricing'))
 const Leaderboard = lazy(() => import('./pages/Leaderboard'))
+const Profile = lazy(() => import('./pages/Profile'))
 const CertificationPage = lazy(() => import('./pages/CertificationPage'))
 const CoursePage = lazy(() => import('./pages/CoursePage'))
 const LessonPage = lazy(() => import('./pages/LessonPage'))
@@ -45,6 +46,8 @@ export default function App() {
             <Route path="/certifications" element={<Certifications />} />
             <Route path="/pricing" element={<Pricing />} />
             <Route path="/leaderboard" element={<Leaderboard />} />
+            <Route path="/profile" element={<Profile />} />
+            <Route path="/u/:username" element={<Profile />} />
             <Route path="/roadmap" element={<Navigate to="/certifications" replace />} />
             <Route path="/cert/:certId" element={<CertificationPage />} />
             <Route path="/course/:courseId" element={<CoursePage />} />
