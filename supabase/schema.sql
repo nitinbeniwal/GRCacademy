@@ -18,14 +18,10 @@ create table if not exists public.profiles (
   country      text,
   xp           integer not null default 0,
   streak       integer not null default 0,
-  -- Pro subscription valid until this instant (null = free tier).
-  pro_until    timestamptz,
   created_at   timestamptz not null default now(),
   updated_at   timestamptz not null default now()
 );
-
--- Existing projects: add the column if the table predates it.
-alter table public.profiles add column if not exists pro_until timestamptz;
+-- Note: Pro entitlement is owned by Clerk Billing, not stored here.
 
 alter table public.profiles enable row level security;
 
@@ -57,26 +53,7 @@ alter table public.xp_events enable row level security;
 create policy "read own events" on public.xp_events
   for select using (user_id = public.clerk_uid());
 -- No direct insert policy: events are written only by the SECURITY DEFINER RPC.
-
--- ---------------------------------------------------------------- purchases
-create table if not exists public.purchases (
-  id                  bigint generated always as identity primary key,
-  user_id             text not null references public.profiles(id) on delete cascade,
-  cert_id             text not null,            -- 'GRC1' | 'ALL_ACCESS' | ...
-  amount_inr          integer not null,
-  razorpay_order_id   text,
-  razorpay_payment_id text,
-  status              text not null default 'created'
-                      check (status in ('created','paid','failed','refunded')),
-  created_at          timestamptz not null default now(),
-  unique (razorpay_order_id)
-);
-
-alter table public.purchases enable row level security;
-create policy "read own purchases" on public.purchases
-  for select using (user_id = public.clerk_uid());
--- Writes happen only via the edge function using the service-role key
--- (service role bypasses RLS), so no client insert/update policy exists.
+-- Payments/subscriptions are handled entirely by Clerk Billing (no table here).
 
 -- ============================================================================
 --  award_xp — the only way XP enters the system from the app.

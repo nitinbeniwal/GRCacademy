@@ -13,11 +13,6 @@ export function formatINR(rupees: number): string {
   return inr.format(rupees)
 }
 
-/** Razorpay charges in the smallest unit (paise). ₹5,999 -> 599900. */
-export function toPaise(rupees: number): number {
-  return Math.round(rupees * 100)
-}
-
 /** Percentage saved vs list price, rounded — e.g. 40 for "40% off". */
 export function discountPct(price: number, listPrice?: number): number | null {
   if (!listPrice || listPrice <= price) return null

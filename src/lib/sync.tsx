@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react'
-import { useUser } from '@clerk/clerk-react'
+import { useUser, useAuth } from '@clerk/clerk-react'
 import { useStore } from '../store/useStore'
 import { clerkEnabled } from '../auth/config'
 import { useSupabase } from './SupabaseProvider'
@@ -40,22 +40,23 @@ function collectAwards(s: ReturnType<typeof useStore.getState>): Award[] {
 function ClerkSync() {
   const client = useSupabase()
   const { user, isSignedIn, isLoaded } = useUser()
+  const { has } = useAuth()
   const streak = useStore((s) => s.streak)
   const setAuth = useStore((s) => s.setAuth)
   const syncing = useRef(false)
 
-  // Reflect Clerk auth state into the store as soon as it settles.
+  // Pro entitlement comes straight from Clerk Billing.
+  const isPro = Boolean(isSignedIn && has?.({ plan: 'pro' }))
+
+  // Reflect Clerk auth + plan into the store as soon as it settles.
   useEffect(() => {
     if (!isLoaded) return
-    if (!isSignedIn) setAuth(false, null)
-  }, [isLoaded, isSignedIn, setAuth])
+    setAuth(Boolean(isSignedIn), isPro)
+  }, [isLoaded, isSignedIn, isPro, setAuth])
 
-  // Ensure a profile row exists, then read back the Pro entitlement.
+  // Keep a profile row for the leaderboard (Supabase still owns XP/ranking).
   useEffect(() => {
-    if (!isSignedIn || !user) return
-    // No Supabase yet: still a signed-in free member.
-    if (!client) return setAuth(true, null)
-
+    if (!client || !isSignedIn || !user) return
     const username =
       user.username ||
       user.primaryEmailAddress?.emailAddress?.split('@')[0] ||
@@ -63,10 +64,8 @@ function ClerkSync() {
     client
       .from('profiles')
       .upsert({ id: user.id, username, avatar_url: user.imageUrl, streak }, { onConflict: 'id' })
-      .select('pro_until')
-      .maybeSingle()
-      .then(({ data }) => setAuth(true, data?.pro_until ?? null))
-  }, [client, isSignedIn, user, streak, setAuth])
+      .then(() => {})
+  }, [client, isSignedIn, user, streak])
 
   // Flush any unsynced awards whenever the store changes.
   useEffect(() => {

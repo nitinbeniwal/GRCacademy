@@ -9,8 +9,7 @@ import { CERT_BY_ID, COURSE_BY_ID, LESSON_INDEX } from '../data/curriculum'
 
 export function useEntitlement() {
   const authed = useStore((s) => s.authed)
-  const proUntil = useStore((s) => s.proUntil)
-  const isPro = Boolean(proUntil && new Date(proUntil).getTime() > Date.now())
+  const isPro = useStore((s) => s.isPro)
   return { authed, isPro }
 }
 

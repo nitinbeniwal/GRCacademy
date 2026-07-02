@@ -1,9 +1,7 @@
-import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { Check } from 'lucide-react'
-import { formatINR } from '../lib/format'
-import { PLANS, YEARLY_SAVING } from '../lib/plans'
-import { useCheckout, type PlanKey } from '../lib/checkout'
+import { PricingTable } from '@clerk/clerk-react'
+import { clerkEnabled } from '../auth/config'
 import { useEntitlement } from '../lib/entitlement'
 
 const FREE_INCLUDES = [
@@ -22,126 +20,81 @@ const PRO_INCLUDES = [
   'Every hands-on scenario lab',
 ]
 
+/** Static plan cards — shown in preview when Clerk Billing isn't configured. */
+function StaticPlans({ isPro }: { isPro: boolean }) {
+  return (
+    <div className="mx-auto mt-10 grid max-w-4xl gap-6 md:grid-cols-2">
+      <div className="flex flex-col rounded-2xl border border-cline bg-white p-8 shadow-card">
+        <h2 className="text-lg font-bold text-cink">Free</h2>
+        <p className="mt-1 text-sm text-cslate">The foundation, on the house.</p>
+        <div className="mt-5 text-4xl font-extrabold text-cink">₹0</div>
+        <ul className="mt-6 space-y-2.5 text-sm">
+          {FREE_INCLUDES.map((f) => (
+            <li key={f} className="flex items-start gap-2 text-cink">
+              <Check size={16} className="mt-0.5 shrink-0 text-emerald-600" /> {f}
+            </li>
+          ))}
+        </ul>
+        <div className="mt-8 flex-1" />
+        <Link to="/certifications" className="btn-ghost w-full">Start with GRC1</Link>
+      </div>
+
+      <div className="relative flex flex-col rounded-2xl border-2 border-cblue bg-white p-8 shadow-cardhover">
+        <span className="absolute -top-3 left-8 rounded-full bg-cblue px-3 py-1 text-xs font-bold text-white">
+          Most popular
+        </span>
+        <h2 className="text-lg font-bold text-cink">Pro</h2>
+        <p className="mt-1 text-sm text-cslate">The complete GRC curriculum.</p>
+        <div className="mt-5 flex items-end gap-1">
+          <span className="text-4xl font-extrabold text-cink">₹150</span>
+          <span className="mb-1 text-sm text-cslate">/month · or ₹1200/year</span>
+        </div>
+        <ul className="mt-6 space-y-2.5 text-sm">
+          {PRO_INCLUDES.map((f) => (
+            <li key={f} className="flex items-start gap-2 text-cink">
+              <Check size={16} className="mt-0.5 shrink-0 text-cblue" /> {f}
+            </li>
+          ))}
+        </ul>
+        <div className="mt-8 flex-1" />
+        {isPro ? (
+          <button disabled className="btn w-full cursor-default bg-emerald-600 text-white">You&apos;re on Pro</button>
+        ) : (
+          <p className="rounded-lg bg-cbg px-4 py-3 text-center text-sm text-cslate">
+            Connect Clerk Billing to enable checkout.
+          </p>
+        )}
+      </div>
+    </div>
+  )
+}
+
 export default function Pricing() {
-  const [cycle, setCycle] = useState<PlanKey>('yearly')
-  const { startCheckout } = useCheckout()
   const { isPro } = useEntitlement()
-  const [busy, setBusy] = useState(false)
-  const [toast, setToast] = useState<{ ok: boolean; msg: string } | null>(null)
-
-  const plan = PLANS[cycle]
-
-  const upgrade = async () => {
-    setBusy(true)
-    const res = await startCheckout(cycle)
-    setBusy(false)
-    setToast({ ok: res.ok, msg: res.message })
-    setTimeout(() => setToast(null), 6000)
-  }
 
   return (
     <div className="bg-cbg">
-      {toast && (
-        <div
-          className={`fixed inset-x-0 top-4 z-50 mx-auto w-fit max-w-[90%] rounded-lg border px-4 py-2.5 text-sm font-semibold shadow-card ${
-            toast.ok ? 'border-emerald-300 bg-white text-emerald-700' : 'border-amber-300 bg-white text-amber-700'
-          }`}
-          role="status"
-        >
-          {toast.msg}
-        </div>
-      )}
-
       <div className="container-x py-16">
         <div className="mx-auto max-w-2xl text-center">
           <h1 className="text-3xl font-extrabold text-cink sm:text-4xl">Simple, honest pricing</h1>
           <p className="mt-3 text-cslate">
-            Start free after you sign up. Upgrade to Pro when you&apos;re ready for the advanced paths and
-            the AI Governance track. One subscription, everything included.
+            Start free after you sign up. Upgrade to Pro for the advanced paths and the AI Governance
+            track. One subscription, everything included — cancel anytime.
           </p>
         </div>
 
-        {/* billing cycle toggle */}
-        <div className="mt-8 flex items-center justify-center gap-3">
-          <span className={`text-sm font-semibold ${cycle === 'monthly' ? 'text-cink' : 'text-cslate'}`}>Monthly</span>
-          <button
-            onClick={() => setCycle((c) => (c === 'monthly' ? 'yearly' : 'monthly'))}
-            className="relative h-7 w-12 rounded-full bg-cblue transition"
-            aria-label="Toggle billing cycle"
-          >
-            <span
-              className={`absolute top-1 h-5 w-5 rounded-full bg-white transition-all ${
-                cycle === 'yearly' ? 'left-6' : 'left-1'
-              }`}
-            />
-          </button>
-          <span className={`text-sm font-semibold ${cycle === 'yearly' ? 'text-cink' : 'text-cslate'}`}>
-            Yearly
-            <span className="ml-1 rounded-full bg-emerald-100 px-2 py-0.5 text-xs font-bold text-emerald-700">
-              save {formatINR(YEARLY_SAVING)}
-            </span>
-          </span>
-        </div>
-
-        <div className="mx-auto mt-10 grid max-w-4xl gap-6 md:grid-cols-2">
-          {/* FREE */}
-          <div className="flex flex-col rounded-2xl border border-cline bg-white p-8 shadow-card">
-            <h2 className="text-lg font-bold text-cink">Free</h2>
-            <p className="mt-1 text-sm text-cslate">The foundation, on the house.</p>
-            <div className="mt-5 flex items-end gap-1">
-              <span className="text-4xl font-extrabold text-cink">{formatINR(0)}</span>
-              <span className="mb-1 text-sm text-cslate">forever</span>
-            </div>
-            <ul className="mt-6 space-y-2.5 text-sm">
-              {FREE_INCLUDES.map((f) => (
-                <li key={f} className="flex items-start gap-2 text-cink">
-                  <Check size={16} className="mt-0.5 shrink-0 text-emerald-600" /> {f}
-                </li>
-              ))}
-            </ul>
-            <div className="mt-8 flex-1" />
-            <Link to="/certifications" className="btn-ghost w-full">Start with GRC1</Link>
+        {clerkEnabled ? (
+          <div className="mx-auto mt-10 max-w-4xl">
+            {/* Clerk Billing renders plans + checkout from your dashboard config. */}
+            <PricingTable />
           </div>
-
-          {/* PRO */}
-          <div className="relative flex flex-col rounded-2xl border-2 border-cblue bg-white p-8 shadow-cardhover">
-            <span className="absolute -top-3 left-8 rounded-full bg-cblue px-3 py-1 text-xs font-bold text-white">
-              Most popular
-            </span>
-            <h2 className="text-lg font-bold text-cink">Pro</h2>
-            <p className="mt-1 text-sm text-cslate">The complete GRC curriculum.</p>
-            <div className="mt-5 flex items-end gap-1">
-              <span className="text-4xl font-extrabold text-cink">{formatINR(plan.price)}</span>
-              <span className="mb-1 text-sm text-cslate">/{plan.per}</span>
-            </div>
-            <p className="mt-1 text-xs text-cslate">
-              {cycle === 'yearly'
-                ? `Billed yearly · works out to ${formatINR(Math.round(plan.price / 12))}/month`
-                : `Billed monthly · switch to yearly and save ${formatINR(YEARLY_SAVING)}`}
-            </p>
-            <ul className="mt-6 space-y-2.5 text-sm">
-              {PRO_INCLUDES.map((f) => (
-                <li key={f} className="flex items-start gap-2 text-cink">
-                  <Check size={16} className="mt-0.5 shrink-0 text-cblue" /> {f}
-                </li>
-              ))}
-            </ul>
-            <div className="mt-8 flex-1" />
-            {isPro ? (
-              <button disabled className="btn w-full cursor-default bg-emerald-600 text-white">
-                You&apos;re on Pro
-              </button>
-            ) : (
-              <button onClick={upgrade} disabled={busy} className="btn-primary w-full">
-                {busy ? 'Opening checkout…' : `Go Pro — ${formatINR(plan.price)}/${plan.per}`}
-              </button>
-            )}
-          </div>
-        </div>
+        ) : (
+          <StaticPlans isPro={isPro} />
+        )}
 
         <p className="mt-8 text-center text-xs text-cslate">
-          Prices in INR, inclusive of taxes. Secure checkout via Razorpay (UPI, cards, netbanking).
-          Cancel anytime — Pro stays active until the end of your billing period.
+          Prices in INR, inclusive of taxes. Secure recurring billing handled by Clerk. Pro stays
+          active until the end of your billing period.
         </p>
       </div>
     </div>

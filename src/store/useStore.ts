@@ -36,12 +36,12 @@ interface StoreState {
   lastActive: string | null
   offerDismissed: boolean
 
-  // entitlement — set by ServerSync from Clerk + Supabase.
+  // entitlement — set by ServerSync from Clerk (Billing).
   // In preview (no Clerk) the user is treated as a signed-in free member.
   authed: boolean
-  proUntil: string | null
+  isPro: boolean
 
-  setAuth: (authed: boolean, proUntil: string | null) => void
+  setAuth: (authed: boolean, isPro: boolean) => void
   enroll: (courseId: string) => void
   completeLesson: (lessonId: string, award?: number) => void
   markQuiz: (lessonId: string, qIndex: number, correct: boolean) => void
@@ -65,9 +65,9 @@ export const useStore = create<StoreState>()(
 
       // Preview (Clerk off) = signed-in free member so the UI is explorable.
       authed: !clerkEnabled,
-      proUntil: null,
+      isPro: false,
 
-      setAuth: (authed, proUntil) => set({ authed, proUntil }),
+      setAuth: (authed, isPro) => set({ authed, isPro }),
 
       enroll: (courseId) => set((s) => (s.enrolled[courseId] ? {} : { enrolled: { ...s.enrolled, [courseId]: true } })),
 
