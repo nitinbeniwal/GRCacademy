@@ -42,7 +42,7 @@ export default function Home() {
               animate={{ opacity: 1, y: 0 }}
               className="chip bg-white/15 text-white"
             >
-              🎯 The specialist GRC academy
+              The specialist GRC academy
             </motion.span>
             <motion.h1
               initial={{ opacity: 0, y: 16 }}
@@ -91,7 +91,9 @@ export default function Home() {
             className="mx-auto w-full max-w-sm rounded-2xl bg-white/10 p-6 backdrop-blur ring-1 ring-white/20"
           >
             <div className="flex items-center gap-3">
-              <div className="grid h-14 w-14 place-items-center rounded-xl bg-white/15 text-3xl">{rank.icon}</div>
+              <div className="grid h-14 w-14 place-items-center rounded-xl bg-white/15 text-xl font-extrabold">
+                {rank.name.charAt(0)}
+              </div>
               <div>
                 <div className="text-xs uppercase tracking-wide text-white/60">Your rank</div>
                 <div className="text-xl font-bold">{rank.name}</div>
@@ -108,14 +110,9 @@ export default function Home() {
               />
             </div>
             <div className="mt-6 grid grid-cols-3 gap-2 text-center text-xs">
-              {[
-                ['🧭', 'Learn'],
-                ['🎮', 'Play labs'],
-                ['🏆', 'Rank up'],
-              ].map(([e, t]) => (
-                <div key={t} className="rounded-lg bg-white/10 py-3">
-                  <div className="text-xl">{e}</div>
-                  <div className="mt-1 text-white/70">{t}</div>
+              {['Learn', 'Practise', 'Rank up'].map((t) => (
+                <div key={t} className="rounded-lg bg-white/10 py-3 font-semibold text-white/80">
+                  {t}
                 </div>
               ))}
             </div>
@@ -168,7 +165,6 @@ export default function Home() {
           return (
             <div key={domain.id} className="mb-8">
               <div className="mb-3 flex items-center gap-2">
-                <span className="text-xl">{domain.icon}</span>
                 <h3 className="text-lg font-bold">{domain.title}</h3>
                 {domain.status === 'coming-soon' && <span className="chip">Coming soon</span>}
               </div>

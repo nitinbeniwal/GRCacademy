@@ -1,14 +1,15 @@
 // ============================================================================
 //  Razorpay checkout (frontend half).
 //  The secret key never touches the browser. This calls two Supabase edge
-//  functions:  razorpay-order  (creates a server-side order) and
-//  razorpay-verify (validates the payment signature, marks the purchase paid).
+//  functions:  razorpay-order  (creates a server-side order for the plan) and
+//  razorpay-verify (validates the signature, extends the Pro subscription).
 // ============================================================================
 import { useCallback } from 'react'
 import { useSupabase } from './SupabaseProvider'
 import { supabaseEnabled } from './supabase'
 import { toPaise } from './format'
-import type { Certification } from '../types'
+import { PLANS } from './plans'
+import { useStore } from '../store/useStore'
 
 /** Payments require Supabase (edge functions hold the Razorpay secret). */
 export const paymentsEnabled = supabaseEnabled
@@ -28,12 +29,15 @@ function loadRazorpay(): Promise<boolean> {
 }
 
 export type CheckoutResult = { ok: boolean; message: string }
+export type PlanKey = 'monthly' | 'yearly'
 
 export function useCheckout() {
   const client = useSupabase()
+  const setAuth = useStore((s) => s.setAuth)
 
   const startCheckout = useCallback(
-    async (cert: Pick<Certification, 'id' | 'title' | 'price'>): Promise<CheckoutResult> => {
+    async (planKey: PlanKey): Promise<CheckoutResult> => {
+      const plan = PLANS[planKey]
       if (!paymentsEnabled || !client) {
         return { ok: false, message: 'Checkout is not configured yet. Add Supabase + Razorpay keys.' }
       }
@@ -42,10 +46,10 @@ export function useCheckout() {
 
       // 1) Server creates the order (amount is validated server-side).
       const { data: order, error } = await client.functions.invoke('razorpay-order', {
-        body: { certId: cert.id, amountInr: cert.price },
+        body: { plan: plan.id },
       })
       if (error || !order?.orderId) {
-        return { ok: false, message: 'Could not start the order. Please try again.' }
+        return { ok: false, message: 'Could not start checkout. Are you signed in? Please try again.' }
       }
 
       // 2) Open Razorpay checkout.
@@ -53,26 +57,26 @@ export function useCheckout() {
         const rzp = new window.Razorpay!({
           key: order.keyId,
           order_id: order.orderId,
-          amount: toPaise(cert.price),
+          amount: toPaise(plan.price),
           currency: 'INR',
           name: 'GRC Academy',
-          description: cert.title,
-          theme: { color: '#28e07a' },
+          description: `Pro — ${plan.label}`,
+          theme: { color: '#0056D2' },
           handler: async (resp: unknown) => {
             const r = resp as Record<string, string>
-            // 3) Server verifies the signature before granting access.
+            // 3) Server verifies the signature before granting Pro.
             const { data: v, error: verr } = await client.functions.invoke('razorpay-verify', {
               body: {
                 orderId: r.razorpay_order_id,
                 paymentId: r.razorpay_payment_id,
                 signature: r.razorpay_signature,
-                certId: cert.id,
               },
             })
             if (verr || !v?.verified) {
               resolve({ ok: false, message: 'Payment could not be verified. If charged, contact support.' })
             } else {
-              resolve({ ok: true, message: 'Payment successful — access unlocked!' })
+              setAuth(true, v.proUntil ?? null) // unlock Pro immediately
+              resolve({ ok: true, message: 'Payment successful — Pro unlocked!' })
             }
           },
           modal: { ondismiss: () => resolve({ ok: false, message: 'Checkout cancelled.' }) },
@@ -80,7 +84,7 @@ export function useCheckout() {
         rzp.open()
       })
     },
-    [client]
+    [client, setAuth]
   )
 
   return { startCheckout, paymentsEnabled }

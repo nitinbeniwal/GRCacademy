@@ -1,6 +1,7 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 import { useShallow } from 'zustand/react/shallow'
+import { clerkEnabled } from '../auth/config'
 
 // XP awards
 export const XP = { lesson: 20, quiz: 30, lab: 80, courseComplete: 200 } as const
@@ -35,6 +36,12 @@ interface StoreState {
   lastActive: string | null
   offerDismissed: boolean
 
+  // entitlement — set by ServerSync from Clerk + Supabase.
+  // In preview (no Clerk) the user is treated as a signed-in free member.
+  authed: boolean
+  proUntil: string | null
+
+  setAuth: (authed: boolean, proUntil: string | null) => void
   enroll: (courseId: string) => void
   completeLesson: (lessonId: string, award?: number) => void
   markQuiz: (lessonId: string, qIndex: number, correct: boolean) => void
@@ -55,6 +62,12 @@ export const useStore = create<StoreState>()(
       streak: 0,
       lastActive: null,
       offerDismissed: false,
+
+      // Preview (Clerk off) = signed-in free member so the UI is explorable.
+      authed: !clerkEnabled,
+      proUntil: null,
+
+      setAuth: (authed, proUntil) => set({ authed, proUntil }),
 
       enroll: (courseId) => set((s) => (s.enrolled[courseId] ? {} : { enrolled: { ...s.enrolled, [courseId]: true } })),
 

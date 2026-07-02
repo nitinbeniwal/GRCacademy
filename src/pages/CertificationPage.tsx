@@ -16,7 +16,6 @@ function CourseRow({ course, index }: { course: Course; index: number }) {
       <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-cblue-50 text-sm font-bold text-cblue">
         {index + 1}
       </span>
-      <span className="text-2xl">{course.icon}</span>
       <div className="min-w-0 flex-1">
         <div className="truncate font-bold text-cink">{course.title}</div>
         <div className="text-xs text-cslate">
@@ -60,7 +59,7 @@ export default function CertificationPage() {
           <div className="grid gap-6 lg:grid-cols-3">
             <div className="lg:col-span-2">
               <div className="flex items-center gap-3">
-                <span className="grid h-14 w-14 place-items-center rounded-2xl bg-white/20 text-3xl">{cert.icon}</span>
+                <span className="grid h-14 w-14 place-items-center rounded-2xl bg-white/20 font-mono text-lg font-extrabold">{cert.code}</span>
                 <div>
                   <div className="flex items-center gap-2 text-sm">
                     <span className="rounded-md bg-white/25 px-2 py-0.5 font-extrabold">{cert.code}</span>

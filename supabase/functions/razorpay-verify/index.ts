@@ -5,7 +5,7 @@
 //  Deploy:  supabase functions deploy razorpay-verify
 // ============================================================================
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
-import { corsHeaders, userIdFromJwt } from '../_shared/cors.ts'
+import { corsHeaders, userIdFromJwt, PLAN_DAYS } from '../_shared/cors.ts'
 
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders })
@@ -29,14 +29,23 @@ Deno.serve(async (req) => {
       Deno.env.get('SUPABASE_URL')!,
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
     )
-    const { error } = await admin
+    const { data: purchase, error } = await admin
       .from('purchases')
       .update({ status: 'paid', razorpay_payment_id: paymentId })
       .eq('razorpay_order_id', orderId)
       .eq('user_id', uid)
-    if (error) return json({ verified: false, error: error.message }, 500)
+      .select('cert_id')
+      .maybeSingle()
+    if (error || !purchase) return json({ verified: false, error: error?.message }, 500)
 
-    return json({ verified: true })
+    // Extend the Pro subscription. Stack onto remaining time if still active.
+    const days = PLAN_DAYS[purchase.cert_id] ?? 30
+    const { data: prof } = await admin.from('profiles').select('pro_until').eq('id', uid).maybeSingle()
+    const base = prof?.pro_until && new Date(prof.pro_until) > new Date() ? new Date(prof.pro_until) : new Date()
+    const proUntil = new Date(base.getTime() + days * 864e5).toISOString()
+    await admin.from('profiles').update({ pro_until: proUntil }).eq('id', uid)
+
+    return json({ verified: true, proUntil })
   } catch (e) {
     return json({ verified: false, error: String(e) }, 500)
   }

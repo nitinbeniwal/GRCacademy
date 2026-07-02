@@ -4,6 +4,7 @@ import Navbar from './components/Navbar'
 import Footer from './components/Footer'
 import ScrollToTop from './components/ScrollToTop'
 import { RequireAuth } from './auth'
+import ContentGuard from './components/ContentGuard'
 import { ServerSync } from './lib/sync'
 import { useStore } from './store/useStore'
 
@@ -41,17 +42,22 @@ export default function App() {
       <main className="flex-1">
         <Suspense fallback={<PageFallback />}>
           <Routes>
+            {/* Public marketing */}
             <Route path="/" element={<Home />} />
-            <Route path="/catalog" element={<Catalog />} />
-            <Route path="/certifications" element={<Certifications />} />
             <Route path="/pricing" element={<Pricing />} />
             <Route path="/leaderboard" element={<Leaderboard />} />
-            <Route path="/profile" element={<Profile />} />
             <Route path="/u/:username" element={<Profile />} />
             <Route path="/roadmap" element={<Navigate to="/certifications" replace />} />
-            <Route path="/cert/:certId" element={<CertificationPage />} />
-            <Route path="/course/:courseId" element={<CoursePage />} />
-            <Route path="/learn/:lessonId" element={<LessonPage />} />
+
+            {/* Login required — catalog & paths are members-only */}
+            <Route path="/profile" element={<RequireAuth><Profile /></RequireAuth>} />
+            <Route path="/catalog" element={<RequireAuth><Catalog /></RequireAuth>} />
+            <Route path="/certifications" element={<RequireAuth><Certifications /></RequireAuth>} />
+
+            {/* Login + Pro entitlement checked per item */}
+            <Route path="/cert/:certId" element={<ContentGuard kind="cert"><CertificationPage /></ContentGuard>} />
+            <Route path="/course/:courseId" element={<ContentGuard kind="course"><CoursePage /></ContentGuard>} />
+            <Route path="/learn/:lessonId" element={<ContentGuard kind="lesson"><LessonPage /></ContentGuard>} />
             <Route
               path="/dashboard"
               element={

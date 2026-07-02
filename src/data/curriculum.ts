@@ -41,7 +41,7 @@ export const CERTIFICATIONS: Certification[] = [
     blurb: 'Start from zero. The language, mental models and core machinery of governance, risk and compliance.',
     outcomes: ['Explain what GRC is and why it exists', 'Build and score a risk register', 'Read a control and its purpose', 'Write an enforceable policy'],
     courseIds: ['c-grc101', 'c-riskreg', 'c-secfound', 'c-policy'], status: 'available',
-    price: 2999, listPrice: 4999, priceNote: 'Foundation tier · lifetime access',
+    access: 'free',
   },
   {
     id: 'GRC2', code: 'GRC2', domainId: 'core', title: 'GRC Practitioner', level: 2, tier: 'Practitioner',
@@ -49,7 +49,7 @@ export const CERTIFICATIONS: Certification[] = [
     blurb: 'The frameworks and day-to-day operations. Run audits, evidence controls, and manage vendor risk to real standards.',
     outcomes: ['Apply ISO 27001, NIST CSF, SOC 2, GDPR and PCI DSS', 'Run an audit and evidence controls', 'Manage third-party risk', 'Map controls across frameworks'],
     courseIds: ['c-iso27001', 'c-iso27701', 'c-nistcsf', 'c-soc2', 'c-gdpr', 'c-dpdpa', 'c-hipaa', 'c-pcidss', 'c-cmmc', 'c-audit', 'c-tprm'], status: 'available',
-    price: 5999, listPrice: 9999, priceNote: 'Practitioner tier · 11 frameworks · lifetime access',
+    access: 'pro',
   },
   {
     id: 'GRCL', code: 'GRCL', domainId: 'core', title: 'GRC Lead', level: 3, tier: 'Lead',
@@ -57,7 +57,7 @@ export const CERTIFICATIONS: Certification[] = [
     blurb: 'Lead a program. Enterprise risk domains, continuity, internal audit, financial controls, board reporting and interview mastery.',
     outcomes: ['Run BCM, internal audit and financial-controls programs', 'Set risk appetite and report to a board', 'Build a GRC program from zero', 'Ace a senior GRC interview'],
     courseIds: ['c-bcm', 'c-intaudit', 'c-fincontrols', 'c-oprisk', 'c-cobit', 'c-career'], status: 'available',
-    price: 9999, listPrice: 15999, priceNote: 'Lead tier · capstone + interview prep · lifetime access',
+    access: 'pro',
   },
   {
     id: 'AIG1', code: 'AIG1', domainId: 'ai', title: 'AI Governance Associate', level: 1, tier: 'Associate',
@@ -65,7 +65,7 @@ export const CERTIFICATIONS: Certification[] = [
     blurb: 'Govern AI systems: classify risk under the EU AI Act, apply the NIST AI RMF, detect bias and run an AI registry.',
     outcomes: ['Classify AI risk under the EU AI Act', 'Apply the four NIST AI RMF functions', 'Detect bias and disparate impact', 'Build an AI system registry'],
     courseIds: ['c-aigov'], status: 'available',
-    price: 4999, listPrice: 7999, priceNote: 'Associate tier · EU AI Act + NIST AI RMF · lifetime access',
+    access: 'pro',
   },
   {
     id: 'AIG2', code: 'AIG2', domainId: 'ai', title: 'AI Governance Professional', level: 2, tier: 'Professional',
@@ -73,7 +73,7 @@ export const CERTIFICATIONS: Certification[] = [
     blurb: 'Go deep: stand up a certifiable ISO 42001 AI Management System and operationalise the NIST AI RMF end to end.',
     outcomes: ['Implement an ISO 42001 AIMS', 'Run an AI impact assessment', 'Operationalise Govern/Map/Measure/Manage', 'Map AI controls to the EU AI Act'],
     courseIds: ['c-iso42001', 'c-airmf'], status: 'available',
-    price: 8999, listPrice: 13999, priceNote: 'Professional tier · ISO 42001 AIMS · lifetime access',
+    access: 'pro',
   },
   {
     id: 'CLD1', code: 'CLD1', domainId: 'cloud', title: 'Cloud GRC Associate', level: 1, tier: 'Associate',
@@ -81,7 +81,7 @@ export const CERTIFICATIONS: Certification[] = [
     blurb: 'Compliance for cloud estates: shared responsibility, the CSA CCM, CSPM, CIS Benchmarks and FedRAMP cloud authorisation.',
     outcomes: ['Cloud shared responsibility at depth', 'Govern multi-cloud with the CSA CCM', 'CSPM & misconfiguration risk', 'FedRAMP & cloud authorisation'],
     courseIds: ['c-cloudfound', 'c-cspm', 'c-fedramp'], status: 'available',
-    price: 4999, listPrice: 7999, priceNote: 'Associate tier · cloud frameworks · lifetime access',
+    access: 'pro',
   },
 ]
 

@@ -14,9 +14,9 @@ Deno.serve(async (req) => {
     const uid = userIdFromJwt(req.headers.get('Authorization'))
     if (!uid) return json({ error: 'unauthorized' }, 401)
 
-    const { certId } = await req.json()
-    const amountInr = PRICES[certId]
-    if (!amountInr) return json({ error: 'unknown cert' }, 400)
+    const { plan } = await req.json()
+    const amountInr = PRICES[plan]
+    if (!amountInr) return json({ error: 'unknown plan' }, 400)
 
     const keyId = Deno.env.get('RAZORPAY_KEY_ID')!
     const keySecret = Deno.env.get('RAZORPAY_KEY_SECRET')!
@@ -31,8 +31,8 @@ Deno.serve(async (req) => {
       body: JSON.stringify({
         amount: amountInr * 100,
         currency: 'INR',
-        receipt: `${uid}:${certId}:${Date.now()}`,
-        notes: { certId, uid },
+        receipt: `${uid}:${plan}:${Date.now()}`,
+        notes: { plan, uid },
       }),
     })
     const order = await rzpRes.json()
@@ -45,7 +45,7 @@ Deno.serve(async (req) => {
     )
     await admin.from('purchases').insert({
       user_id: uid,
-      cert_id: certId,
+      cert_id: plan,
       amount_inr: amountInr,
       razorpay_order_id: order.id,
       status: 'created',

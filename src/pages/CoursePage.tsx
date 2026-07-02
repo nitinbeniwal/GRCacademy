@@ -1,9 +1,7 @@
 import { useParams, Link, useNavigate } from 'react-router-dom'
 import { useState } from 'react'
 import {
-  Star,
   Clock,
-  Users,
   BookOpen,
   ChevronDown,
   PlayCircle,
@@ -78,18 +76,9 @@ export default function CoursePage() {
           </div>
           <div className="grid gap-6 lg:grid-cols-3">
             <div className="lg:col-span-2">
-              <div className="flex items-center gap-3">
-                <span className="text-4xl">{course.icon}</span>
-                <h1 className="text-3xl font-extrabold">{course.title}</h1>
-              </div>
+              <h1 className="text-3xl font-extrabold">{course.title}</h1>
               <p className="mt-3 max-w-2xl text-lg text-white/85">{course.subtitle}</p>
               <div className="mt-5 flex flex-wrap items-center gap-5 text-sm">
-                <span className="flex items-center gap-1 font-semibold text-amber-300">
-                  <Star size={15} fill="currentColor" /> {course.rating}
-                </span>
-                <span className="flex items-center gap-1">
-                  <Users size={15} /> {course.learners.toLocaleString()} learners
-                </span>
                 <span className="flex items-center gap-1">
                   <Clock size={15} /> {course.weeks} modules · {course.hours}h
                 </span>

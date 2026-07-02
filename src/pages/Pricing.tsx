@@ -1,176 +1,148 @@
 import { useState } from 'react'
-import { Check, Zap, Shield, Trophy, Loader2 } from 'lucide-react'
-import { CERTIFICATIONS, coursesInCert, DOMAIN_BY_ID } from '../data/curriculum'
-import { formatINR, discountPct } from '../lib/format'
-import { useCheckout } from '../lib/checkout'
-import type { Certification } from '../types'
+import { Link } from 'react-router-dom'
+import { Check } from 'lucide-react'
+import { formatINR } from '../lib/format'
+import { PLANS, YEARLY_SAVING } from '../lib/plans'
+import { useCheckout, type PlanKey } from '../lib/checkout'
+import { useEntitlement } from '../lib/entitlement'
 
-// All-access bundle: sum of live certs, then a headline discount.
-const LIVE = CERTIFICATIONS.filter((c) => c.status === 'available')
-const BUNDLE_LIST = LIVE.reduce((n, c) => n + (c.listPrice ?? c.price), 0)
-const BUNDLE_PRICE = 19999
+const FREE_INCLUDES = [
+  'The GRC1 foundation path',
+  'Governance, risk & compliance fundamentals',
+  'Risk registers & core controls',
+  'Progress tracking, XP and the leaderboard',
+]
 
-function PriceCard({
-  cert,
-  onBuy,
-  busy,
-}: {
-  cert: Certification
-  onBuy: (c: Pick<Certification, 'id' | 'title' | 'price'>) => void
-  busy: boolean
-}) {
-  const pct = discountPct(cert.price, cert.listPrice)
-  const courses = coursesInCert(cert.id)
-  const soon = cert.status === 'coming-soon'
-  const domain = DOMAIN_BY_ID[cert.domainId]
-
-  return (
-    <div className="panel panel-hover flex flex-col p-6">
-      <div className="flex items-center justify-between">
-        <span className="tier-pill">
-          {cert.code} · {cert.tier}
-        </span>
-        {pct && !soon && <span className="save-badge">{pct}% off</span>}
-      </div>
-
-      <div className="mt-4 flex items-center gap-3">
-        <span className={`grid h-11 w-11 place-items-center rounded-xl bg-gradient-to-br ${cert.color} text-2xl`}>
-          {cert.icon}
-        </span>
-        <div>
-          <h3 className="font-bold leading-tight text-arena-text">{cert.title}</h3>
-          <p className="text-xs text-arena-muted">{domain?.title}</p>
-        </div>
-      </div>
-
-      <p className="mt-3 text-sm text-arena-muted">{cert.blurb}</p>
-
-      <div className="mt-5 flex items-end gap-2">
-        <span className="text-3xl font-extrabold text-arena-text">{formatINR(cert.price)}</span>
-        {cert.listPrice && <span className="price-strike text-sm">{formatINR(cert.listPrice)}</span>}
-      </div>
-      {cert.priceNote && <p className="mt-1 text-xs text-arena-muted">{cert.priceNote}</p>}
-
-      <ul className="mt-4 space-y-2 text-sm">
-        <li className="flex items-center gap-2 text-arena-text">
-          <Check size={15} className="text-neon-green" /> {courses.length || '—'} courses · hands-on labs
-        </li>
-        {cert.outcomes.slice(0, 3).map((o) => (
-          <li key={o} className="flex items-start gap-2 text-arena-muted">
-            <Check size={15} className="mt-0.5 shrink-0 text-neon-green" /> {o}
-          </li>
-        ))}
-      </ul>
-
-      <div className="mt-6 flex-1" />
-      {soon ? (
-        <button
-          disabled
-          className="btn w-full cursor-not-allowed border border-arena-line bg-night-800 text-arena-muted"
-        >
-          Coming soon
-        </button>
-      ) : (
-        <button onClick={() => onBuy(cert)} disabled={busy} className="btn-neon w-full">
-          {busy ? <Loader2 size={16} className="animate-spin" /> : `Enroll · ${formatINR(cert.price)}`}
-        </button>
-      )}
-    </div>
-  )
-}
+const PRO_INCLUDES = [
+  'Everything in Free',
+  'GRC2 Practitioner — 11 frameworks (ISO 27001, SOC 2, GDPR, PCI, more)',
+  'GRC Lead — audit, continuity, financial & IT governance',
+  'AI Governance — EU AI Act, NIST AI RMF, ISO 42001',
+  'Cloud GRC — shared responsibility, CSPM, FedRAMP',
+  'Every hands-on scenario lab',
+]
 
 export default function Pricing() {
+  const [cycle, setCycle] = useState<PlanKey>('yearly')
   const { startCheckout } = useCheckout()
-  const [busy, setBusy] = useState<string | null>(null)
+  const { isPro } = useEntitlement()
+  const [busy, setBusy] = useState(false)
   const [toast, setToast] = useState<{ ok: boolean; msg: string } | null>(null)
 
-  const onBuy = async (c: Pick<Certification, 'id' | 'title' | 'price'>) => {
-    setBusy(c.id)
-    const res = await startCheckout(c)
-    setBusy(null)
+  const plan = PLANS[cycle]
+
+  const upgrade = async () => {
+    setBusy(true)
+    const res = await startCheckout(cycle)
+    setBusy(false)
     setToast({ ok: res.ok, msg: res.message })
     setTimeout(() => setToast(null), 6000)
   }
 
   return (
-    <div className="arena min-h-screen">
+    <div className="bg-cbg">
       {toast && (
         <div
-          className={`fixed inset-x-0 top-4 z-50 mx-auto w-fit max-w-[90%] rounded-lg border px-4 py-2.5 text-sm font-semibold shadow-panel ${
-            toast.ok
-              ? 'border-neon-green/40 bg-night-800 text-neon-green'
-              : 'border-neon-amber/40 bg-night-800 text-neon-amber'
+          className={`fixed inset-x-0 top-4 z-50 mx-auto w-fit max-w-[90%] rounded-lg border px-4 py-2.5 text-sm font-semibold shadow-card ${
+            toast.ok ? 'border-emerald-300 bg-white text-emerald-700' : 'border-amber-300 bg-white text-amber-700'
           }`}
           role="status"
         >
           {toast.msg}
         </div>
       )}
-      <div className="bg-radial-glow">
-        <div className="container-x py-16">
-          {/* hero */}
-          <div className="mx-auto max-w-2xl text-center">
-            <span className="tier-pill">Pricing</span>
-            <h1 className="mt-4 font-mono text-4xl font-extrabold text-arena-text sm:text-5xl">
-              One-time price. <span className="text-neon-green">Lifetime</span> access.
-            </h1>
-            <p className="mt-4 text-arena-muted">
-              No subscriptions, no per-seat traps. Buy a certification path once, keep it forever —
-              every course, every lab, and every future update inside that path.
-            </p>
-          </div>
 
-          {/* trust strip */}
-          <div className="mx-auto mt-8 flex max-w-3xl flex-wrap justify-center gap-x-8 gap-y-3 text-sm text-arena-muted">
-            <span className="flex items-center gap-2"><Zap size={15} className="text-neon-cyan" /> Instant access</span>
-            <span className="flex items-center gap-2"><Trophy size={15} className="text-neon-amber" /> XP, ranks & leaderboard</span>
-            <span className="flex items-center gap-2"><Shield size={15} className="text-neon-green" /> Secure UPI / card checkout</span>
-          </div>
-
-          {/* all-access bundle */}
-          <div className="mx-auto mt-12 max-w-4xl">
-            <div className="panel relative overflow-hidden p-8 shadow-glow">
-              <div className="pointer-events-none absolute inset-x-0 top-0 h-24 bg-radial-glow" />
-              <div className="relative flex flex-col items-start justify-between gap-6 md:flex-row md:items-center">
-                <div>
-                  <span className="rank-badge">👑 Best value</span>
-                  <h2 className="mt-3 font-mono text-2xl font-extrabold text-arena-text">All-Access Pass</h2>
-                  <p className="mt-1 max-w-md text-sm text-arena-muted">
-                    Every live certification path — Core GRC, AI Governance and all future launches.
-                    The full arena, unlocked.
-                  </p>
-                </div>
-                <div className="text-right">
-                  <div className="flex items-end gap-2 md:justify-end">
-                    <span className="text-4xl font-extrabold text-neon-green">{formatINR(BUNDLE_PRICE)}</span>
-                    <span className="price-strike text-sm">{formatINR(BUNDLE_LIST)}</span>
-                  </div>
-                  <p className="mt-1 text-xs text-arena-muted">
-                    Save {formatINR(BUNDLE_LIST - BUNDLE_PRICE)} vs buying separately
-                  </p>
-                  <button
-                    onClick={() => onBuy({ id: 'ALL_ACCESS', title: 'All-Access Pass', price: BUNDLE_PRICE })}
-                    disabled={busy === 'ALL_ACCESS'}
-                    className="btn-neon mt-3"
-                  >
-                    {busy === 'ALL_ACCESS' ? <Loader2 size={16} className="animate-spin" /> : 'Get All-Access'}
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* individual certs */}
-          <div className="mt-14 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {CERTIFICATIONS.map((cert) => (
-              <PriceCard key={cert.id} cert={cert} onBuy={onBuy} busy={busy === cert.id} />
-            ))}
-          </div>
-
-          <p className="mt-10 text-center text-xs text-arena-muted">
-            Prices in INR, inclusive of taxes. Secure checkout via Razorpay (UPI, cards, netbanking).
+      <div className="container-x py-16">
+        <div className="mx-auto max-w-2xl text-center">
+          <h1 className="text-3xl font-extrabold text-cink sm:text-4xl">Simple, honest pricing</h1>
+          <p className="mt-3 text-cslate">
+            Start free after you sign up. Upgrade to Pro when you&apos;re ready for the advanced paths and
+            the AI Governance track. One subscription, everything included.
           </p>
         </div>
+
+        {/* billing cycle toggle */}
+        <div className="mt-8 flex items-center justify-center gap-3">
+          <span className={`text-sm font-semibold ${cycle === 'monthly' ? 'text-cink' : 'text-cslate'}`}>Monthly</span>
+          <button
+            onClick={() => setCycle((c) => (c === 'monthly' ? 'yearly' : 'monthly'))}
+            className="relative h-7 w-12 rounded-full bg-cblue transition"
+            aria-label="Toggle billing cycle"
+          >
+            <span
+              className={`absolute top-1 h-5 w-5 rounded-full bg-white transition-all ${
+                cycle === 'yearly' ? 'left-6' : 'left-1'
+              }`}
+            />
+          </button>
+          <span className={`text-sm font-semibold ${cycle === 'yearly' ? 'text-cink' : 'text-cslate'}`}>
+            Yearly
+            <span className="ml-1 rounded-full bg-emerald-100 px-2 py-0.5 text-xs font-bold text-emerald-700">
+              save {formatINR(YEARLY_SAVING)}
+            </span>
+          </span>
+        </div>
+
+        <div className="mx-auto mt-10 grid max-w-4xl gap-6 md:grid-cols-2">
+          {/* FREE */}
+          <div className="flex flex-col rounded-2xl border border-cline bg-white p-8 shadow-card">
+            <h2 className="text-lg font-bold text-cink">Free</h2>
+            <p className="mt-1 text-sm text-cslate">The foundation, on the house.</p>
+            <div className="mt-5 flex items-end gap-1">
+              <span className="text-4xl font-extrabold text-cink">{formatINR(0)}</span>
+              <span className="mb-1 text-sm text-cslate">forever</span>
+            </div>
+            <ul className="mt-6 space-y-2.5 text-sm">
+              {FREE_INCLUDES.map((f) => (
+                <li key={f} className="flex items-start gap-2 text-cink">
+                  <Check size={16} className="mt-0.5 shrink-0 text-emerald-600" /> {f}
+                </li>
+              ))}
+            </ul>
+            <div className="mt-8 flex-1" />
+            <Link to="/certifications" className="btn-ghost w-full">Start with GRC1</Link>
+          </div>
+
+          {/* PRO */}
+          <div className="relative flex flex-col rounded-2xl border-2 border-cblue bg-white p-8 shadow-cardhover">
+            <span className="absolute -top-3 left-8 rounded-full bg-cblue px-3 py-1 text-xs font-bold text-white">
+              Most popular
+            </span>
+            <h2 className="text-lg font-bold text-cink">Pro</h2>
+            <p className="mt-1 text-sm text-cslate">The complete GRC curriculum.</p>
+            <div className="mt-5 flex items-end gap-1">
+              <span className="text-4xl font-extrabold text-cink">{formatINR(plan.price)}</span>
+              <span className="mb-1 text-sm text-cslate">/{plan.per}</span>
+            </div>
+            <p className="mt-1 text-xs text-cslate">
+              {cycle === 'yearly'
+                ? `Billed yearly · works out to ${formatINR(Math.round(plan.price / 12))}/month`
+                : `Billed monthly · switch to yearly and save ${formatINR(YEARLY_SAVING)}`}
+            </p>
+            <ul className="mt-6 space-y-2.5 text-sm">
+              {PRO_INCLUDES.map((f) => (
+                <li key={f} className="flex items-start gap-2 text-cink">
+                  <Check size={16} className="mt-0.5 shrink-0 text-cblue" /> {f}
+                </li>
+              ))}
+            </ul>
+            <div className="mt-8 flex-1" />
+            {isPro ? (
+              <button disabled className="btn w-full cursor-default bg-emerald-600 text-white">
+                You&apos;re on Pro
+              </button>
+            ) : (
+              <button onClick={upgrade} disabled={busy} className="btn-primary w-full">
+                {busy ? 'Opening checkout…' : `Go Pro — ${formatINR(plan.price)}/${plan.per}`}
+              </button>
+            )}
+          </div>
+        </div>
+
+        <p className="mt-8 text-center text-xs text-cslate">
+          Prices in INR, inclusive of taxes. Secure checkout via Razorpay (UPI, cards, netbanking).
+          Cancel anytime — Pro stays active until the end of your billing period.
+        </p>
       </div>
     </div>
   )

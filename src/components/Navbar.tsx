@@ -62,9 +62,7 @@ export default function Navbar() {
             title={`${xp} XP · view profile`}
           >
             <Trophy size={15} />
-            <span className="hidden lg:inline">
-              {rank.icon} {rank.name}
-            </span>
+            <span className="hidden lg:inline">{rank.name}</span>
             <span className="rounded-full bg-cblue px-2 py-0.5 text-xs text-white">{xp} XP</span>
           </button>
           <AuthControls />

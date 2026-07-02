@@ -4,7 +4,6 @@ import { Lock, CheckCircle2, ArrowRight } from 'lucide-react'
 import type { Certification } from '../types'
 import { coursesInCert, courseLessonCount } from '../data/curriculum'
 import { useCertProgress } from '../hooks/useProgress'
-import { formatINR, discountPct } from '../lib/format'
 
 export default function CertCard({ cert }: { cert: Certification }) {
   const courses = coursesInCert(cert.id)
@@ -21,12 +20,11 @@ export default function CertCard({ cert }: { cert: Certification }) {
       }`}
     >
       <div className={`flex items-center gap-3 bg-gradient-to-r ${cert.color} px-5 py-4 text-white`}>
-        <span className="grid h-12 w-12 place-items-center rounded-xl bg-white/20 text-2xl">{cert.icon}</span>
+        <span className="grid h-11 w-14 place-items-center rounded-lg bg-white/15 font-mono text-base font-extrabold tracking-wide ring-1 ring-white/25">
+          {cert.code}
+        </span>
         <div>
-          <div className="flex items-center gap-2">
-            <span className="rounded-md bg-white/25 px-2 py-0.5 text-xs font-extrabold tracking-wide">{cert.code}</span>
-            <span className="text-[11px] uppercase tracking-wide text-white/80">Level {cert.level} · {cert.tier}</span>
-          </div>
+          <div className="text-[11px] uppercase tracking-wide text-white/80">Level {cert.level} · {cert.tier}</div>
           <h3 className="mt-0.5 text-lg font-extrabold leading-tight">{cert.title}</h3>
         </div>
         {earned && <CheckCircle2 className="ml-auto text-white" />}
@@ -52,7 +50,7 @@ export default function CertCard({ cert }: { cert: Certification }) {
           </>
         )}
 
-        <div className="mt-auto flex items-end justify-between pt-4">
+        <div className="mt-auto flex items-center justify-between pt-4">
           {soon ? (
             <span className="chip">Coming soon</span>
           ) : (
@@ -60,18 +58,14 @@ export default function CertCard({ cert }: { cert: Certification }) {
               {percent > 0 ? 'Continue' : 'Start certification'} <ArrowRight size={15} />
             </span>
           )}
-          {!soon && (
-            <span className="text-right leading-tight">
-              <span className="text-base font-extrabold text-cink">{formatINR(cert.price)}</span>
-              {cert.listPrice && (
-                <span className="ml-1 text-xs text-cslate line-through">{formatINR(cert.listPrice)}</span>
-              )}
-              {(() => {
-                const p = discountPct(cert.price, cert.listPrice)
-                return p ? <span className="ml-1 text-[11px] font-bold text-emerald-600">-{p}%</span> : null
-              })()}
-            </span>
-          )}
+          {!soon &&
+            (cert.access === 'free' ? (
+              <span className="rounded-full bg-emerald-100 px-2.5 py-1 text-xs font-bold text-emerald-700">Free</span>
+            ) : (
+              <span className="inline-flex items-center gap-1 rounded-full bg-cblue-50 px-2.5 py-1 text-xs font-bold text-cblue-700">
+                <Lock size={11} /> Pro
+              </span>
+            ))}
         </div>
       </div>
     </motion.div>

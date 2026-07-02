@@ -18,9 +18,14 @@ create table if not exists public.profiles (
   country      text,
   xp           integer not null default 0,
   streak       integer not null default 0,
+  -- Pro subscription valid until this instant (null = free tier).
+  pro_until    timestamptz,
   created_at   timestamptz not null default now(),
   updated_at   timestamptz not null default now()
 );
+
+-- Existing projects: add the column if the table predates it.
+alter table public.profiles add column if not exists pro_until timestamptz;
 
 alter table public.profiles enable row level security;
 

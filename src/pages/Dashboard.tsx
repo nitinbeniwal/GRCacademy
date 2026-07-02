@@ -8,7 +8,6 @@ import { useCourseProgress, useCertProgress } from '../hooks/useProgress'
 import ProgressRing from '../components/ProgressRing'
 import CourseCard from '../components/CourseCard'
 import ConfirmDialog from '../components/ConfirmDialog'
-import EarlyBird from '../components/EarlyBird'
 
 function EnrolledRow({ course }: { course: Course }) {
   const pct = useCourseProgress(course)
@@ -75,10 +74,6 @@ export default function Dashboard() {
 
   return (
     <div className="container-x py-8">
-      <div className="mb-6">
-        <EarlyBird />
-      </div>
-
       {/* rank hero */}
       <div className="overflow-hidden rounded-2xl bg-gradient-to-br from-cblue-800 to-violet-700 p-6 text-white sm:p-8">
         <div className="flex flex-wrap items-center gap-6">
