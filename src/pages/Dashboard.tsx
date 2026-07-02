@@ -5,6 +5,7 @@ import { COURSES, CERTIFICATIONS, courseLessonCount } from '../data/curriculum'
 import type { Course, Certification } from '../types'
 import { useStore, rankFor, nextRank, RANKS } from '../store/useStore'
 import { useCourseProgress, useCertProgress } from '../hooks/useProgress'
+import { useEntitlement } from '../lib/entitlement'
 import ProgressRing from '../components/ProgressRing'
 import CourseCard from '../components/CourseCard'
 import ConfirmDialog from '../components/ConfirmDialog'
@@ -38,10 +39,11 @@ function CertProgress({ cert }: { cert: Certification }) {
       to={`/cert/${cert.id}`}
       className="flex items-center gap-3 rounded-xl border border-cline bg-white p-4 hover:border-cblue hover:shadow-card"
     >
-      <span className="grid h-10 w-10 place-items-center rounded-lg bg-cblue-50 text-xl">{cert.icon}</span>
+      <span className="grid h-10 w-14 shrink-0 place-items-center rounded-lg bg-cblue-50 font-mono text-xs font-bold text-cblue-700">
+        {cert.code}
+      </span>
       <div className="min-w-0 flex-1">
         <div className="flex items-center gap-2">
-          <span className="text-xs font-extrabold text-cblue">{cert.code}</span>
           <span className="truncate text-sm font-semibold">{cert.title}</span>
           {earned && <Award size={15} className="ml-auto text-amber-500" />}
         </div>
@@ -56,6 +58,7 @@ function CertProgress({ cert }: { cert: Certification }) {
 
 export default function Dashboard() {
   const { xp, streak, enrolled, labsDone, lessonsDone, resetAll } = useStore()
+  const { isPro } = useEntitlement()
   const [confirmOpen, setConfirmOpen] = useState(false)
   const rank = rankFor(xp)
   const next = nextRank(xp)
@@ -77,12 +80,25 @@ export default function Dashboard() {
       {/* rank hero */}
       <div className="overflow-hidden rounded-2xl bg-gradient-to-br from-cblue-800 to-violet-700 p-6 text-white sm:p-8">
         <div className="flex flex-wrap items-center gap-6">
-          <div className="grid h-20 w-20 place-items-center rounded-2xl bg-white/15 text-5xl">{rank.icon}</div>
+          <div className="grid h-20 w-20 place-items-center rounded-2xl bg-white/15 text-3xl font-extrabold">
+            {rank.name.charAt(0)}
+          </div>
           <div>
-            <div className="text-xs uppercase tracking-wide text-white/60">Current rank</div>
+            <div className="flex items-center gap-2">
+              <span className="text-xs uppercase tracking-wide text-white/60">Current rank</span>
+              {isPro ? (
+                <span className="rounded-full bg-amber-400 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-amber-950">
+                  Pro
+                </span>
+              ) : (
+                <span className="rounded-full bg-white/20 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-white/80">
+                  Free
+                </span>
+              )}
+            </div>
             <div className="text-2xl font-extrabold">{rank.name}</div>
             <div className="mt-1 text-sm text-white/80">
-              {xp} XP {next && `· ${next.xp - xp} XP to ${next.name} ${next.icon}`}
+              {xp} XP {next && `· ${next.xp - xp} XP to ${next.name}`}
             </div>
             <div className="mt-2 h-2 w-64 max-w-full overflow-hidden rounded-full bg-white/20">
               <div
