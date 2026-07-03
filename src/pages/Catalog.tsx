@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react'
+import { useSearchParams } from 'react-router-dom'
 import { Search } from 'lucide-react'
 import { DOMAINS, CERTIFICATIONS, COURSES } from '../data/curriculum'
 import type { CourseLevel } from '../types'
@@ -7,7 +8,8 @@ import CourseCard from '../components/CourseCard'
 const LEVELS: (CourseLevel | 'All')[] = ['All', 'Beginner', 'Intermediate', 'Advanced', 'Lead']
 
 export default function Catalog() {
-  const [q, setQ] = useState('')
+  const [params] = useSearchParams()
+  const [q, setQ] = useState(params.get('q') ?? '')
   const [level, setLevel] = useState<CourseLevel | 'All'>('All')
   const [domain, setDomain] = useState('all')
   const [cert, setCert] = useState('all')
