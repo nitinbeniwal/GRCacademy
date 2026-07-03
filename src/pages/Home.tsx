@@ -71,8 +71,8 @@ export default function Home() {
               <Link to="/certifications" className="btn bg-white text-cblue-700 hover:bg-white/90">
                 Browse certifications <ArrowRight size={16} />
               </Link>
-              <Link to="/catalog" className="btn border border-white/40 text-white hover:bg-white/10">
-                Explore all courses
+              <Link to="/search" className="btn border border-white/40 text-white hover:bg-white/10">
+                Search all courses
               </Link>
             </motion.div>
             <div className="mt-9 flex gap-8">

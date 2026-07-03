@@ -19,7 +19,7 @@ export default function Navbar() {
   const onSearch = (e: FormEvent) => {
     e.preventDefault()
     const term = q.trim()
-    nav(term ? `/catalog?q=${encodeURIComponent(term)}` : '/catalog')
+    nav(term ? `/search?q=${encodeURIComponent(term)}` : '/search')
   }
 
   return (

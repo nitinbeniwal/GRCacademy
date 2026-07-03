@@ -23,8 +23,8 @@ export default function Footer() {
               </Link>
             </li>
             <li>
-              <Link className="hover:text-cblue" to="/catalog">
-                Course catalog
+              <Link className="hover:text-cblue" to="/search">
+                Search courses
               </Link>
             </li>
             <li>

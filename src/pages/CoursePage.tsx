@@ -62,8 +62,8 @@ export default function CoursePage() {
       <div className="bg-gradient-to-br from-cblue-800 to-violet-700 text-white">
         <div className="container-x py-10">
           <div className="mb-3 text-sm text-white/70">
-            <Link to="/catalog" className="hover:underline">
-              Catalog
+            <Link to="/certifications" className="hover:underline">
+              Certifications
             </Link>
             {cert && (
               <>

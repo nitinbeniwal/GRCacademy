@@ -9,7 +9,7 @@ import { ServerSync } from './lib/sync'
 import { useStore } from './store/useStore'
 
 const Home = lazy(() => import('./pages/Home'))
-const Catalog = lazy(() => import('./pages/Catalog'))
+const Search = lazy(() => import('./pages/Search'))
 const Certifications = lazy(() => import('./pages/Certifications'))
 const Pricing = lazy(() => import('./pages/Pricing'))
 const Leaderboard = lazy(() => import('./pages/Leaderboard'))
@@ -42,16 +42,17 @@ export default function App() {
       <main className="flex-1">
         <Suspense fallback={<PageFallback />}>
           <Routes>
-            {/* Public marketing */}
+            {/* Public marketing + discovery */}
             <Route path="/" element={<Home />} />
             <Route path="/pricing" element={<Pricing />} />
             <Route path="/leaderboard" element={<Leaderboard />} />
+            <Route path="/search" element={<Search />} />
             <Route path="/u/:username" element={<Profile />} />
             <Route path="/roadmap" element={<Navigate to="/certifications" replace />} />
+            <Route path="/catalog" element={<Navigate to="/search" replace />} />
 
-            {/* Login required — catalog & paths are members-only */}
+            {/* Login required — paths are members-only */}
             <Route path="/profile" element={<RequireAuth><Profile /></RequireAuth>} />
-            <Route path="/catalog" element={<RequireAuth><Catalog /></RequireAuth>} />
             <Route path="/certifications" element={<RequireAuth><Certifications /></RequireAuth>} />
 
             {/* Login + Pro entitlement checked per item */}
