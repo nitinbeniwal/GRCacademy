@@ -1,6 +1,8 @@
 -- ============================================================================
---  GRC ACADEMY — Supabase schema
+--  GRC ACADEMY — Supabase schema (v2)
 --  Run in: Supabase Dashboard → SQL Editor → paste → Run.
+--  Safe to re-run: every statement is idempotent, so paste the whole file
+--  again after any update.
 --  Identity comes from Clerk. auth.jwt()->>'sub' = the Clerk user id.
 -- ============================================================================
 
@@ -23,15 +25,22 @@ create table if not exists public.profiles (
 );
 -- Note: Pro entitlement is owned by Clerk Billing, not stored here.
 
+-- Onboarding fields (added v2 — `if not exists` keeps re-runs safe).
+alter table public.profiles add column if not exists goal text;
+alter table public.profiles add column if not exists onboarded boolean not null default false;
+
 alter table public.profiles enable row level security;
 
 -- Anyone may read profiles (public leaderboard / profile pages).
+drop policy if exists "profiles are public" on public.profiles;
 create policy "profiles are public" on public.profiles
   for select using (true);
 
 -- A user may create/update only their own row.
+drop policy if exists "insert own profile" on public.profiles;
 create policy "insert own profile" on public.profiles
   for insert with check (id = public.clerk_uid());
+drop policy if exists "update own profile" on public.profiles;
 create policy "update own profile" on public.profiles
   for update using (id = public.clerk_uid());
 
@@ -50,14 +59,39 @@ create table if not exists public.xp_events (
 );
 
 alter table public.xp_events enable row level security;
+drop policy if exists "read own events" on public.xp_events;
 create policy "read own events" on public.xp_events
   for select using (user_id = public.clerk_uid());
 -- No direct insert policy: events are written only by the SECURITY DEFINER RPC.
 -- Payments/subscriptions are handled entirely by Clerk Billing (no table here).
 
+-- ---------------------------------------------------------------- feedback
+-- Lesson ratings + free-text comments + content requests. This is how we
+-- learn which content lands and what is missing. Users write their own rows;
+-- reading them back is limited to the author (review submissions in the
+-- Supabase dashboard, which bypasses RLS via the service role).
+create table if not exists public.feedback (
+  id         bigint generated always as identity primary key,
+  user_id    text not null references public.profiles(id) on delete cascade,
+  lesson_id  text,                              -- null = general/site feedback
+  rating     integer check (rating between 1 and 5),
+  comment    text,
+  created_at timestamptz not null default now()
+);
+
+alter table public.feedback enable row level security;
+drop policy if exists "insert own feedback" on public.feedback;
+create policy "insert own feedback" on public.feedback
+  for insert with check (user_id = public.clerk_uid());
+drop policy if exists "read own feedback" on public.feedback;
+create policy "read own feedback" on public.feedback
+  for select using (user_id = public.clerk_uid());
+
 -- ============================================================================
 --  award_xp — the only way XP enters the system from the app.
 --  Server owns the amount per kind. Idempotent via the unique constraint.
+--  Creates a minimal profile row if none exists yet, so a fresh sign-up can
+--  never hit a foreign-key error (the app upgrades the username later).
 -- ============================================================================
 create or replace function public.award_xp(p_kind text, p_ref text)
 returns integer
@@ -84,6 +118,12 @@ begin
   if v_amount = 0 then
     raise exception 'unknown xp kind: %', p_kind;
   end if;
+
+  -- Ensure the profile exists (placeholder username; app replaces it during
+  -- onboarding). Random suffix avoids unique-username collisions.
+  insert into public.profiles (id, username)
+  values (v_uid, 'user-' || substr(md5(v_uid || clock_timestamp()::text), 1, 8))
+  on conflict (id) do nothing;
 
   -- Idempotent insert; if it already exists, award nothing.
   insert into public.xp_events (user_id, kind, ref, amount)

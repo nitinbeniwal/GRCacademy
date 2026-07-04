@@ -41,7 +41,18 @@ interface StoreState {
   authed: boolean
   isPro: boolean
 
+  // true when the signed-in user has no completed onboarding on the server.
+  // Not persisted meaningfully — re-derived by ServerSync every session.
+  needsOnboarding: boolean
+
   setAuth: (authed: boolean, isPro: boolean) => void
+  setNeedsOnboarding: (v: boolean) => void
+  /**
+   * Merge server-side progress into local state (cross-device restore).
+   * Marks items done WITHOUT awarding local XP — the server's XP total is
+   * authoritative and replaces the local counter.
+   */
+  hydrate: (data: { lessons: string[]; quizzes: string[]; labs: string[]; xp: number; streak: number }) => void
   enroll: (courseId: string) => void
   completeLesson: (lessonId: string, award?: number) => void
   markQuiz: (lessonId: string, qIndex: number, correct: boolean) => void
@@ -66,8 +77,28 @@ export const useStore = create<StoreState>()(
       // Preview (Clerk off) = signed-in free member so the UI is explorable.
       authed: !clerkEnabled,
       isPro: false,
+      needsOnboarding: false,
 
       setAuth: (authed, isPro) => set({ authed, isPro }),
+      setNeedsOnboarding: (v) => set({ needsOnboarding: v }),
+
+      hydrate: ({ lessons, quizzes, labs, xp, streak }) =>
+        set((s) => {
+          const lessonsDone = { ...s.lessonsDone }
+          for (const id of lessons) lessonsDone[id] = true
+          const quizCorrect = { ...s.quizCorrect }
+          for (const key of quizzes) quizCorrect[key] = true
+          const labsDone = { ...s.labsDone }
+          // Server stores completion, not scores — keep any local best score.
+          for (const id of labs) if (!labsDone[id]) labsDone[id] = 1
+          return {
+            lessonsDone,
+            quizCorrect,
+            labsDone,
+            xp: Math.max(xp, s.xp),
+            streak: Math.max(streak, s.streak),
+          }
+        }),
 
       enroll: (courseId) => set((s) => (s.enrolled[courseId] ? {} : { enrolled: { ...s.enrolled, [courseId]: true } })),
 

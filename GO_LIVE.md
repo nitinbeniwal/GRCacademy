@@ -31,6 +31,8 @@ Status legend: 🔴 not done yet · 🟢 done
 
 ## D. Supabase — data + leaderboard 🔴
 - [ ] SQL Editor → paste all of `supabase/schema.sql` → **Run**.
+      (Re-run the whole file after any update — it's idempotent. The v2 schema
+      adds onboarding fields + a `feedback` table for lesson ratings.)
 - [ ] Authentication → Sign In / Providers → **Third-Party Auth → Add Clerk** →
       paste issuer domain `https://nearby-treefrog-15.clerk.accounts.dev`.
 - If the leaderboard shows an auth error, switch `VITE_SUPABASE_ANON_KEY` to the

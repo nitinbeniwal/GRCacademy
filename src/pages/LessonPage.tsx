@@ -6,6 +6,7 @@ import { useStore, XP } from '../store/useStore'
 import { useCourseProgress } from '../hooks/useProgress'
 import Quiz from '../components/Quiz'
 import Confetti from '../components/Confetti'
+import LessonFeedback from '../components/LessonFeedback'
 import LabHost from '../labs/LabHost'
 import NotFound from './NotFound'
 
@@ -125,6 +126,8 @@ export default function LessonPage() {
               />
             )}
           </div>
+
+          <LessonFeedback lessonId={lesson.id} />
 
           <div className="mt-8 flex items-center justify-between">
             {siblings.prev ? (

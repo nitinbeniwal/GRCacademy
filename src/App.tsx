@@ -1,4 +1,4 @@
-import { Routes, Route, Navigate } from 'react-router-dom'
+import { Routes, Route, Navigate, useLocation, useNavigate } from 'react-router-dom'
 import { Suspense, lazy, useEffect } from 'react'
 import Navbar from './components/Navbar'
 import Footer from './components/Footer'
@@ -18,7 +18,19 @@ const CertificationPage = lazy(() => import('./pages/CertificationPage'))
 const CoursePage = lazy(() => import('./pages/CoursePage'))
 const LessonPage = lazy(() => import('./pages/LessonPage'))
 const Dashboard = lazy(() => import('./pages/Dashboard'))
+const Onboarding = lazy(() => import('./pages/Onboarding'))
 const NotFound = lazy(() => import('./pages/NotFound'))
+
+/** Sends freshly signed-up users to /welcome until they finish onboarding. */
+function OnboardingGate() {
+  const needsOnboarding = useStore((s) => s.needsOnboarding)
+  const { pathname } = useLocation()
+  const nav = useNavigate()
+  useEffect(() => {
+    if (needsOnboarding && pathname !== '/welcome') nav('/welcome', { replace: true })
+  }, [needsOnboarding, pathname, nav])
+  return null
+}
 
 function PageFallback() {
   return (
@@ -38,6 +50,7 @@ export default function App() {
     <div className="flex min-h-screen flex-col">
       <ScrollToTop />
       <ServerSync />
+      <OnboardingGate />
       <Navbar />
       <main className="flex-1">
         <Suspense fallback={<PageFallback />}>
@@ -52,6 +65,7 @@ export default function App() {
             <Route path="/catalog" element={<Navigate to="/search" replace />} />
 
             {/* Login required — paths are members-only */}
+            <Route path="/welcome" element={<RequireAuth><Onboarding /></RequireAuth>} />
             <Route path="/profile" element={<RequireAuth><Profile /></RequireAuth>} />
             <Route path="/certifications" element={<RequireAuth><Certifications /></RequireAuth>} />
 
