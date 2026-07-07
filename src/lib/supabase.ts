@@ -3,8 +3,8 @@
 //
 //  Auth model: Clerk owns identity + OTP. Supabase trusts a Clerk-issued JWT.
 //  Set up (one time, in dashboards):
-//    1. Clerk → JWT Templates → New → name it "supabase". Signing algo RS256.
-//       Add claim  { "role": "authenticated" }  (Supabase RLS expects this).
+//    1. Clerk → Integrations → Supabase → activate. This adds the claim
+//       { "role": "authenticated" } to session tokens (no JWT template).
 //    2. Supabase → Authentication → Sign In / Providers → Third-Party Auth →
 //       add Clerk, paste your Clerk Frontend API / issuer domain.
 //    3. RLS policies key off  auth.jwt() ->> 'sub'  (the Clerk user id).

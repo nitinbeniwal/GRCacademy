@@ -17,7 +17,9 @@ const SupabaseContext = createContext<SupabaseClient | null>(null)
 function ClerkBridge({ children }: { children: ReactNode }) {
   const { getToken } = useAuth()
   const client = useMemo(
-    () => makeAuthedClient(() => getToken({ template: 'supabase' })),
+    // Clerk's native Supabase integration adds `role: authenticated` to the
+    // session token itself — no JWT template needed.
+    () => makeAuthedClient(() => getToken()),
     [getToken]
   )
   return <SupabaseContext.Provider value={client}>{children}</SupabaseContext.Provider>
